@@ -48,9 +48,6 @@
         </div>
 
         <div class="market-selector">
-          <div class="mini-search-box">
-            <input type="text" id="sidebar-search" placeholder="New search...">
-          </div>
           <p class="sidebar-label">Recently Analyzed</p>
           <div id="recent-list" class="market-list"></div>
         </div>
@@ -98,6 +95,29 @@
             <div class="panel-heading">
               <p class="eyebrow">Trade Diagnosis</p>
               <h3>Why did this move?</h3>
+            </div>
+            <div class="diagnosis-content">
+              <p id="analysis-text" class="diagnosis-copy">Connecting to historical archive to process order filled events...</p>
+              <div class="pivotal-stat">
+                <div class="stat-item">
+                  <span class="label">Entry Range</span>
+                  <strong id="stat-entry">--</strong>
+                </div>
+                <div class="stat-item">
+                  <span class="label">Outcome</span>
+                  <strong id="stat-outcome">--</strong>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+>Why did this move?</h3>
             </div>
             <div class="diagnosis-content">
               <p id="analysis-text" class="diagnosis-copy">Connecting to historical archive to process order filled events...</p>

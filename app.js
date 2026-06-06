@@ -2,9 +2,9 @@ let candleSeries = null;
 let chart = null;
 let searchIndex = [];
 let recentAnalyzed = [];
+let selectedIndex = -1;
 
 async function init() {
-    // 1. Load Search Index
     try {
         const response = await fetch('search_index.json');
         searchIndex = await response.json();
@@ -12,12 +12,32 @@ async function init() {
         console.error("Failed to load search index", e);
     }
 
-    // 2. Setup Search Logic
-    const mainSearch = document.querySelector("#main-search");
-    const suggestions = document.querySelector("#search-suggestions");
+    setupSearch("#main-search", "#search-suggestions");
+    setupSearch("#terminal-top-search", "#terminal-suggestions");
 
-    mainSearch.addEventListener("input", (e) => {
+    document.querySelector("#return-search").addEventListener("click", () => {
+        document.querySelector("#hero-search").style.display = "flex";
+        document.querySelector("#terminal-view").style.display = "none";
+        document.body.classList.add("search-mode");
+    });
+
+    document.querySelectorAll(".pill").forEach(p => {
+        p.addEventListener("click", () => {
+            const input = document.querySelector("#main-search");
+            input.value = p.dataset.search;
+            input.dispatchEvent(new Event("input"));
+        });
+    });
+}
+
+function setupSearch(inputSelector, suggestionSelector) {
+    const input = document.querySelector(inputSelector);
+    const suggestions = document.querySelector(suggestionSelector);
+
+    input.addEventListener("input", (e) => {
         const val = e.target.value.toLowerCase();
+        selectedIndex = -1;
+        
         if (val.length < 2) {
             suggestions.classList.remove("active");
             return;
@@ -28,8 +48,8 @@ async function init() {
             .slice(0, 8);
 
         if (filtered.length > 0) {
-            suggestions.innerHTML = filtered.map(m => `
-                <div class="suggestion-item" data-id="${m.id}">
+            suggestions.innerHTML = filtered.map((m, i) => `
+                <div class="suggestion-item" data-id="${m.id}" id="sug-${i}">
                     <strong>${m.q}</strong>
                     <span>${m.c} • ${m.v} Volume</span>
                 </div>
@@ -40,29 +60,40 @@ async function init() {
         }
     });
 
-    // 3. Selection Logic
-    document.addEventListener("click", (e) => {
-        const item = e.target.closest(".suggestion-item");
-        if (item) {
-            const id = item.dataset.id;
-            loadMarketTerminal(id);
-            suggestions.classList.remove("active");
+    input.addEventListener("keydown", (e) => {
+        const items = suggestions.querySelectorAll(".suggestion-item");
+        if (!suggestions.classList.contains("active")) return;
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+            updateSelection(items);
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, 0);
+            updateSelection(items);
+        } else if (e.key === "Enter" && selectedIndex > -1) {
+            e.preventDefault();
+            items[selectedIndex].click();
         }
     });
 
-    // 4. Return to Search
-    document.querySelector("#return-search").addEventListener("click", () => {
-        document.querySelector("#hero-search").style.display = "flex";
-        document.querySelector("#terminal-view").style.display = "none";
-        document.body.classList.add("search-mode");
+    document.addEventListener("click", (e) => {
+        const item = e.target.closest(suggestionSelector + " .suggestion-item");
+        if (item) {
+            loadMarketTerminal(item.dataset.id);
+            suggestions.classList.remove("active");
+            input.value = "";
+        } else if (!e.target.closest(inputSelector)) {
+            suggestions.classList.remove("active");
+        }
     });
+}
 
-    // 5. Quick Links
-    document.querySelectorAll(".pill").forEach(p => {
-        p.addEventListener("click", () => {
-            mainSearch.value = p.dataset.search;
-            mainSearch.dispatchEvent(new Event("input"));
-        });
+function updateSelection(items) {
+    items.forEach((item, i) => {
+        item.classList.toggle("selected", i === selectedIndex);
+        if (i === selectedIndex) item.scrollIntoView({ block: 'nearest' });
     });
 }
 
@@ -70,26 +101,39 @@ function loadMarketTerminal(id) {
     const market = searchIndex.find(m => m.id === id);
     if (!market) return;
 
-    // Switch View
+    // Update Recent
+    if (!recentAnalyzed.find(m => m.id === id)) {
+        recentAnalyzed.unshift(market);
+        if (recentAnalyzed.length > 10) recentAnalyzed.pop();
+        renderRecentSidebar();
+    }
+
     document.querySelector("#hero-search").style.display = "none";
     document.querySelector("#terminal-view").style.display = "grid";
     document.body.classList.remove("search-mode");
 
-    // Update UI
     document.querySelector("#display-title").textContent = market.q;
     document.querySelector("#display-vol").textContent = `${market.v} Vol`;
     document.querySelector("#display-date").textContent = `Resolved: ${market.d}`;
     document.querySelector("#display-cat").textContent = market.c;
 
-    // Loading State
     document.querySelector("#chart-loading").style.display = "block";
     
-    // Use requestAnimationFrame to ensure the grid layout has reflowed
     requestAnimationFrame(() => {
         setTimeout(() => {
             renderProChart(market);
         }, 50);
     });
+}
+
+function renderRecentSidebar() {
+    const list = document.querySelector("#recent-list");
+    list.innerHTML = recentAnalyzed.map(m => `
+        <div class="market-item" onclick="loadMarketTerminal('${m.id}')">
+            <h4>${m.q}</h4>
+            <div class="meta">${m.v} Volume</div>
+        </div>
+    `).join("");
 }
 
 function renderProChart(market) {
