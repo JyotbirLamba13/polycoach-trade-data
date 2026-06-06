@@ -84,34 +84,46 @@ function loadMarketTerminal(id) {
     // Loading State
     document.querySelector("#chart-loading").style.display = "block";
     
-    // Simulate Data Fetching & Chart Rendering
-    // In a real app, we'd hit a function in remote_analysis.py via API
-    renderProChart(market);
+    // Use requestAnimationFrame to ensure the grid layout has reflowed
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            renderProChart(market);
+        }, 50);
+    });
 }
 
 function renderProChart(market) {
     const container = document.getElementById('candlestick-chart');
     container.innerHTML = ""; // Clear
     
-    chart = LightweightCharts.createChart(container, {
+    const chartOptions = {
         layout: {
             background: { color: '#ffffff' },
-            textColor: '#333',
+            textColor: '#64748b',
+            fontSize: 12,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
         },
         grid: {
-            vertLines: { color: '#f0f3fa' },
-            horzLines: { color: '#f0f3fa' },
+            vertLines: { color: '#f1f5f9' },
+            horzLines: { color: '#f1f5f9' },
         },
         crosshair: {
             mode: LightweightCharts.CrosshairMode.Normal,
         },
         rightPriceScale: {
-            borderColor: '#f0f3fa',
+            borderColor: '#e2e8f0',
+            visible: true,
         },
         timeScale: {
-            borderColor: '#f0f3fa',
+            borderColor: '#e2e8f0',
+            timeVisible: true,
+            secondsVisible: false,
         },
-    });
+        handleScroll: true,
+        handleScale: true,
+    };
+
+    chart = LightweightCharts.createChart(container, chartOptions);
 
     candleSeries = chart.addCandlestickSeries({
         upColor: '#10b981',
@@ -121,30 +133,43 @@ function renderProChart(market) {
         wickDownColor: '#ef4444',
     });
 
-    // Generate Synthetic Candlestick Data (since we have sample prices)
-    // To make it look "real", we oscillate around the pivotal price
+    // Generate Synthetic Candlestick Data (Professional scale)
     const data = [];
     let basePrice = 50;
     if (market.q.toLowerCase().includes("trump")) basePrice = 65;
-    if (market.v.includes("M")) basePrice = 75;
+    if (market.v.includes("M")) basePrice = 80;
 
-    for (let i = 0; i < 100; i++) {
-        const open = basePrice + (Math.random() - 0.5) * 5;
-        const close = open + (Math.random() - 0.5) * 4;
+    const now = Math.floor(Date.now() / 1000);
+    for (let i = 0; i < 150; i++) {
+        const time = now - (150 - i) * 3600;
+        const volatility = 2 + Math.random() * 3;
+        const open = basePrice;
+        const close = open + (Math.random() - 0.45) * volatility; // Slight upward bias
+        const high = Math.max(open, close) + Math.random() * 2;
+        const low = Math.min(open, close) - Math.random() * 2;
+        
         data.push({
-            time: (1740000000 + i * 3600),
-            open: open / 100,
-            high: Math.max(open, close) / 100 + 0.02,
-            low: Math.min(open, close) / 100 - 0.02,
-            close: close / 100,
+            time: time,
+            open: Math.min(99, Math.max(1, open)) / 100,
+            high: Math.min(100, Math.max(open, high)) / 100,
+            low: Math.min(open, Math.max(0, low)) / 100,
+            close: Math.min(99, Math.max(1, close)) / 100,
         });
         basePrice = close;
     }
 
     candleSeries.setData(data);
-    document.querySelector("#chart-loading").style.display = "none";
+    chart.timeScale().fitContent();
 
-    // Update Data Panels
+    // Responsive Resize
+    const resizeObserver = new ResizeObserver(entries => {
+        if (entries.length === 0 || entries[0].target !== container) return;
+        const newRect = entries[0].contentRect;
+        chart.applyOptions({ width: newRect.width, height: newRect.height });
+    });
+    resizeObserver.observe(container);
+
+    document.querySelector("#chart-loading").style.display = "none";
     updateDataPanels(market);
 }
 
