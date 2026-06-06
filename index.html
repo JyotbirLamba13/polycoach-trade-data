@@ -3,327 +3,106 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PolyCoach | Polymarket Trade Intelligence</title>
-    <meta name="description" content="PolyCoach is a trader intelligence platform for prediction markets like Polymarket, helping users diagnose entry quality, study winning behaviors, and prevent risk leaks.">
+    <title>PolyAlpha | Prediction Market Terminal</title>
+    <meta name="description" content="Visualizing the history of prediction markets. Explore whale movements, price action, and historical trade data.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <main class="shell">
-      <div id="ai-coach-overlay" class="coach-overlay">
-        <div class="coach-container">
-          <header class="coach-header">
-            <div class="coach-identity">
-              <div class="status-dot"></div>
-              <strong>AI Trading Coach</strong>
-            </div>
-            <button id="close-coach" aria-label="Close chat">×</button>
-          </header>
-          <div class="coach-messages" id="coach-messages">
-            <div class="message coach">
-              Hello! I'm analyzing your latest signals. Want to know why whales are entering the election markets, or should we look at your recent risk diagnosis?
-            </div>
-          </div>
-          <div class="coach-input-area">
-            <input type="text" id="coach-input" placeholder="Ask about market patterns..." autocomplete="off">
-            <button id="send-coach">Send</button>
-          </div>
-        </div>
-      </div>
-
-      <aside class="sidebar" aria-label="Product navigation">
+    <main class="terminal-shell">
+      <aside class="terminal-sidebar">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true">
+          <div class="brand-mark">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
           </div>
-          <div>
-            <h1>PolyCoach</h1>
-            <p>Polymarket Trade Intelligence</p>
+          <h1>PolyAlpha</h1>
+        </div>
+
+        <div class="market-selector">
+          <p class="sidebar-label">Featured Markets</p>
+          <div id="market-list" class="market-list">
+            <!-- Populated from historic_cases.json -->
           </div>
         </div>
 
-        <nav class="nav-tabs" aria-label="Primary">
-          <button class="nav-tab active" data-view="trade">
-            <span class="tab-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <div class="sidebar-footer">
+          <button class="primary-button" id="open-coach">
+            <span class="tab-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </span>
-            Analyze Trade
+            Insights Assistant
           </button>
-          <button class="nav-tab" data-view="profile">
-            <span class="tab-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </span>
-            Diagnose Profile
-          </button>
-          <button class="nav-tab" data-view="case">
-            <span class="tab-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
-            </span>
-            Case Study
-          </button>
-        </nav>
-
-        <section class="method-card">
-          <p class="eyebrow">Product thesis</p>
-          <p class="method-copy">Losing traders do not need more raw data. They need feedback loops that explain entry quality, timing, risk, and what profitable traders did differently.</p>
-        </section>
-        
-        <button class="primary-button coach-trigger" id="open-coach">
-          <span class="tab-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </span>
-          AI Trading Coach
-        </button>
+        </div>
       </aside>
 
-      <section class="workspace">
-        <header class="topbar">
-          <div>
-            <p class="eyebrow">Portfolio prototype</p>
-            <h2>Why did I lose this trade?</h2>
+      <section class="terminal-main">
+        <header class="terminal-header">
+          <div class="market-info">
+            <h2 id="current-market-title">Select a Market</h2>
+            <div class="market-meta">
+              <span id="current-market-vol">$0M Vol</span>
+              <span id="current-market-date">Resolved: --</span>
+            </div>
           </div>
-          <div class="status-pill">
-            <span class="status-dot" aria-hidden="true"></span>
-            Historical pattern engine
+          <div class="terminal-status">
+            <span class="status-dot"></span> Historical Archive Mode
           </div>
         </header>
 
-        <section id="trade-view" class="view active" aria-labelledby="trade-heading">
-          <div class="input-band">
-            <div class="section-title">
-              <h3 id="trade-heading">Trade Prep</h3>
-              <p>Paste a market URL or title, add current odds, and compare the setup against similar historical Polymarket behavior.</p>
+        <div class="chart-container">
+          <canvas id="mainChart"></canvas>
+          <div id="whale-markers"></div>
+        </div>
+
+        <div class="terminal-bottom-grid">
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="eyebrow">Trade Distribution</p>
+              <h3>Whale Activity & Large Orders</h3>
             </div>
-
-            <form class="trade-form" id="trade-form">
-              <label>
-                <span>Market URL or title</span>
-                <input id="market-input" type="text" value="Will Bitcoin be higher in the next 15 minutes?" autocomplete="off">
-              </label>
-              <label>
-                <span>Current YES odds</span>
-                <input id="odds-input" type="number" min="1" max="99" value="72">
-              </label>
-              <label>
-                <span>Time remaining</span>
-                <select id="time-input">
-                  <option value="short">Under 1 hour</option>
-                  <option value="medium" selected>1-24 hours</option>
-                  <option value="long">More than 1 day</option>
-                </select>
-              </label>
-              <button class="primary-button" type="submit">Analyze setup</button>
-            </form>
-          </div>
-
-          <div class="grid-two">
-            <article class="panel diagnosis-panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Setup diagnosis</p>
-                <h3 id="setup-label">Late momentum entry</h3>
-              </div>
-              <div class="score-ring" id="score-ring" style="--score: 42">
-                <span id="setup-score">42</span>
-                <small>Entry quality</small>
-              </div>
-              <p class="diagnosis-copy" id="setup-copy">Historically, traders who buy after a fast odds move above 70c have weaker outcomes unless volume keeps expanding and profitable wallets entered before the move.</p>
-              <div class="metric-row">
-                <div>
-                  <strong id="similar-count">184</strong>
-                  <span>similar markets</span>
-                </div>
-                <div>
-                  <strong id="resolved-rate">38%</strong>
-                  <span>profitable late entries</span>
-                </div>
-                <div>
-                  <strong id="risk-label">High</strong>
-                  <span>chase risk</span>
-                </div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Winner vs loser pattern</p>
-                <h3>Same market, different behavior</h3>
-              </div>
-              <div class="compare-bars">
-                <div class="compare-item">
-                  <div class="compare-copy">
-                    <span>Profitable traders</span>
-                    <strong id="winner-entry">Median entry: 44c</strong>
-                  </div>
-                  <div class="bar-track"><div class="bar-fill winner" id="winner-bar"></div></div>
-                </div>
-                <div class="compare-item">
-                  <div class="compare-copy">
-                    <span>Losing traders</span>
-                    <strong id="loser-entry">Median entry: 76c</strong>
-                  </div>
-                  <div class="bar-track"><div class="bar-fill loser" id="loser-bar"></div></div>
-                </div>
-              </div>
-              <ul class="insight-list" id="trade-insights"></ul>
-            </article>
-          </div>
-
-          <div class="grid-three">
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Live trending signals</p>
-                <h3>High-volume active markets</h3>
-              </div>
-              <div class="signals-list" id="signals-list">
-                <!-- Data from latest_signals.json will be injected here -->
-                <p class="subtle">Connecting to repository feed...</p>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Historical analogs</p>
-                <h3>Past markets that behaved similarly</h3>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Market type</th>
-                      <th>Pattern</th>
-                      <th>Outcome</th>
-                    </tr>
-                  </thead>
-                  <tbody id="analog-table"></tbody>
-                </table>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Before entering</p>
-                <h3>Decision checklist</h3>
-              </div>
-              <ul class="checklist" id="checklist"></ul>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Feedback loop</p>
-                <h3>Rank likely failure modes</h3>
-              </div>
-              <p class="subtle">When users rank these explanations, the model learns which diagnosis best matched their real decision process.</p>
-              <div class="rank-list" id="rank-list"></div>
-            </article>
-          </div>
-        </section>
-
-        <section id="profile-view" class="view" aria-labelledby="profile-heading">
-          <div class="input-band">
-            <div class="section-title">
-              <h3 id="profile-heading">Personal Trade Diagnosis</h3>
-              <p>Input a Polymarket profile or wallet to translate trade history into behavioral patterns, risk leaks, and suggested rules.</p>
+            <div id="whale-trades-feed" class="winners-list">
+              <!-- Populated from winning_trades.json for specific market -->
             </div>
+          </article>
 
-            <form class="profile-form" id="profile-form">
-              <label>
-                <span>Profile URL or wallet</span>
-                <input id="profile-input" type="text" value="0x8f...sample-wallet" autocomplete="off">
-              </label>
-              <label>
-                <span>Focus area</span>
-                <select id="focus-input">
-                  <option value="all">All markets</option>
-                  <option value="crypto">Crypto short-duration</option>
-                  <option value="politics">Politics and elections</option>
-                  <option value="sports">Sports</option>
-                </select>
-              </label>
-              <button class="primary-button" type="submit">Generate report</button>
-            </form>
-          </div>
-
-          <div class="profile-grid">
-            <article class="panel profile-summary">
-              <div class="panel-heading">
-                <p class="eyebrow">Trader Hall of Fame</p>
-                <h3>Winning Trades Archive</h3>
-              </div>
-              <p>Top realized PnL transactions from the repository. We track early entries by whales that resulted in massive settlement payouts.</p>
-              
-              <div class="winners-list" id="winners-list">
-                <!-- Data from winning_trades.json will be injected here -->
-                <p class="subtle">Loading winning trades...</p>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Your loss breakdown</p>
-                <h3>Where trades went wrong</h3>
-              </div>
-              <div class="loss-stack" id="loss-stack"></div>
-            </article>
-          </div>
-
-          <div class="grid-two">
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">What to change first</p>
-                <h3>Personal rules</h3>
-              </div>
-              <ul class="insight-list" id="personal-rules"></ul>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Model feedback</p>
-                <h3>Confirm the diagnosis</h3>
-              </div>
-              <p class="subtle">The user can rank the real reason a loss happened. This creates labeled feedback for better future diagnosis.</p>
-              <div class="feedback-options">
-                <button data-feedback="entry">Entry was too late</button>
-                <button data-feedback="exit">Exit plan was weak</button>
-                <button data-feedback="liquidity">Liquidity was ignored</button>
-                <button data-feedback="thesis">Original thesis was wrong</button>
-              </div>
-              <p class="feedback-note" id="feedback-note">No feedback submitted yet.</p>
-            </article>
-          </div>
-        </section>
-
-        <section id="case-view" class="view" aria-labelledby="case-heading">
-          <div class="case-layout">
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Wayback Machine</p>
-                <h3 id="case-heading">Historical Case Studies</h3>
-              </div>
-              <p class="case-copy">Explore pivotal moments in Polymarket history. We analyze the trade distribution and price action of high-volume closed markets to understand what happened and why.</p>
-              
-              <div class="historic-grid" id="historic-grid">
-                <!-- Data from historic_cases.json will be injected here -->
-                <p class="subtle">Loading historical archive...</p>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Institutional knowledge</p>
-                <h3>Pattern Database</h3>
-              </div>
-              <ul class="insight-list">
-                <li><strong>Late-stage squeeze:</strong> Volume spike at 90c+ often traps retail buyers.</li>
-                <li><strong>Thesis collapse:</strong> Rapid 50c drop usually follows oracle confirmation leaks.</li>
-                <li><strong>Narrative breakout:</strong> Slow 20c-80c climb without major reversals indicates "smart" accumulation.</li>
-              </ul>
-            </article>
-          </div>
-        </section>
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="eyebrow">Market Narrative</p>
+              <h3>Historical Outcome</h3>
+            </div>
+            <div class="narrative-content">
+              <p id="market-diagnosis" class="diagnosis-copy">Select a market to see the historical analysis of how and why it settled.</p>
+              <div class="pattern-badge" id="pattern-badge">---</div>
+            </div>
+          </article>
+        </div>
       </section>
     </main>
+
+    <!-- AI Coach Overlay (Retained for B2C Assistant) -->
+    <div id="ai-coach-overlay" class="coach-overlay">
+      <div class="coach-container">
+        <header class="coach-header">
+          <div class="coach-identity">
+            <div class="status-dot"></div>
+            <strong>Terminal Assistant</strong>
+          </div>
+          <button id="close-coach">×</button>
+        </header>
+        <div class="coach-messages" id="coach-messages">
+          <div class="message coach">
+            Welcome to the PolyAlpha archive. I can help explain the price action and whale entries on these historical charts. Which market are you analyzing?
+          </div>
+        </div>
+        <div class="coach-input-area">
+          <input type="text" id="coach-input" placeholder="Ask about this market's history..." autocomplete="off">
+          <button id="send-coach">Send</button>
+        </div>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>
