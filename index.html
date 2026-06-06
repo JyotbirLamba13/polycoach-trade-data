@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PolyCoach | Polymarket Trade Intelligence</title>
+    <meta name="description" content="PolyCoach is a trader intelligence platform for prediction markets like Polymarket, helping users diagnose entry quality, study winning behaviors, and prevent risk leaks.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar" aria-label="Product navigation">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+          </div>
+          <div>
+            <h1>PolyCoach</h1>
+            <p>Polymarket Trade Intelligence</p>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="Primary">
+          <button class="nav-tab active" data-view="trade">
+            <span class="tab-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            Analyze Trade
+          </button>
+          <button class="nav-tab" data-view="profile">
+            <span class="tab-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            Diagnose Profile
+          </button>
+          <button class="nav-tab" data-view="case">
+            <span class="tab-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+            </span>
+            Case Study
+          </button>
+        </nav>
+
+        <section class="method-card">
+          <p class="eyebrow">Product thesis</p>
+          <p class="method-copy">Losing traders do not need more raw data. They need feedback loops that explain entry quality, timing, risk, and what profitable traders did differently.</p>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Portfolio prototype</p>
+            <h2>Why did I lose this trade?</h2>
+          </div>
+          <div class="status-pill">
+            <span class="status-dot" aria-hidden="true"></span>
+            Historical pattern engine
+          </div>
+        </header>
+
+        <section id="trade-view" class="view active" aria-labelledby="trade-heading">
+          <div class="input-band">
+            <div class="section-title">
+              <h3 id="trade-heading">Trade Prep</h3>
+              <p>Paste a market URL or title, add current odds, and compare the setup against similar historical Polymarket behavior.</p>
+            </div>
+
+            <form class="trade-form" id="trade-form">
+              <label>
+                <span>Market URL or title</span>
+                <input id="market-input" type="text" value="Will Bitcoin be higher in the next 15 minutes?" autocomplete="off">
+              </label>
+              <label>
+                <span>Current YES odds</span>
+                <input id="odds-input" type="number" min="1" max="99" value="72">
+              </label>
+              <label>
+                <span>Time remaining</span>
+                <select id="time-input">
+                  <option value="short">Under 1 hour</option>
+                  <option value="medium" selected>1-24 hours</option>
+                  <option value="long">More than 1 day</option>
+                </select>
+              </label>
+              <button class="primary-button" type="submit">Analyze setup</button>
+            </form>
+          </div>
+
+          <div class="grid-two">
+            <article class="panel diagnosis-panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Setup diagnosis</p>
+                <h3 id="setup-label">Late momentum entry</h3>
+              </div>
+              <div class="score-ring" id="score-ring" style="--score: 42">
+                <span id="setup-score">42</span>
+                <small>Entry quality</small>
+              </div>
+              <p class="diagnosis-copy" id="setup-copy">Historically, traders who buy after a fast odds move above 70c have weaker outcomes unless volume keeps expanding and profitable wallets entered before the move.</p>
+              <div class="metric-row">
+                <div>
+                  <strong id="similar-count">184</strong>
+                  <span>similar markets</span>
+                </div>
+                <div>
+                  <strong id="resolved-rate">38%</strong>
+                  <span>profitable late entries</span>
+                </div>
+                <div>
+                  <strong id="risk-label">High</strong>
+                  <span>chase risk</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Winner vs loser pattern</p>
+                <h3>Same market, different behavior</h3>
+              </div>
+              <div class="compare-bars">
+                <div class="compare-item">
+                  <div class="compare-copy">
+                    <span>Profitable traders</span>
+                    <strong id="winner-entry">Median entry: 44c</strong>
+                  </div>
+                  <div class="bar-track"><div class="bar-fill winner" id="winner-bar"></div></div>
+                </div>
+                <div class="compare-item">
+                  <div class="compare-copy">
+                    <span>Losing traders</span>
+                    <strong id="loser-entry">Median entry: 76c</strong>
+                  </div>
+                  <div class="bar-track"><div class="bar-fill loser" id="loser-bar"></div></div>
+                </div>
+              </div>
+              <ul class="insight-list" id="trade-insights"></ul>
+            </article>
+          </div>
+
+          <div class="grid-three">
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Historical analogs</p>
+                <h3>Past markets that behaved similarly</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Market type</th>
+                      <th>Pattern</th>
+                      <th>Outcome</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analog-table"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Before entering</p>
+                <h3>Decision checklist</h3>
+              </div>
+              <ul class="checklist" id="checklist"></ul>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Feedback loop</p>
+                <h3>Rank likely failure modes</h3>
+              </div>
+              <p class="subtle">When users rank these explanations, the model learns which diagnosis best matched their real decision process.</p>
+              <div class="rank-list" id="rank-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="profile-view" class="view" aria-labelledby="profile-heading">
+          <div class="input-band">
+            <div class="section-title">
+              <h3 id="profile-heading">Personal Trade Diagnosis</h3>
+              <p>Input a Polymarket profile or wallet to translate trade history into behavioral patterns, risk leaks, and suggested rules.</p>
+            </div>
+
+            <form class="profile-form" id="profile-form">
+              <label>
+                <span>Profile URL or wallet</span>
+                <input id="profile-input" type="text" value="0x8f...sample-wallet" autocomplete="off">
+              </label>
+              <label>
+                <span>Focus area</span>
+                <select id="focus-input">
+                  <option value="all">All markets</option>
+                  <option value="crypto">Crypto short-duration</option>
+                  <option value="politics">Politics and elections</option>
+                  <option value="sports">Sports</option>
+                </select>
+              </label>
+              <button class="primary-button" type="submit">Generate report</button>
+            </form>
+          </div>
+
+          <div class="profile-grid">
+            <article class="panel profile-summary">
+              <div class="panel-heading">
+                <p class="eyebrow">Trader archetype</p>
+                <h3 id="archetype">Late momentum buyer</h3>
+              </div>
+              <p id="archetype-copy">This profile often enters after a visible move has already happened. The trader is directionally right more often than their realized PnL suggests, but late entries compress upside and increase reversal risk.</p>
+              <div class="metric-row">
+                <div>
+                  <strong id="profile-pnl">-$1,842</strong>
+                  <span>estimated PnL</span>
+                </div>
+                <div>
+                  <strong id="profile-win">46%</strong>
+                  <span>win rate</span>
+                </div>
+                <div>
+                  <strong id="profile-leak">Entry timing</strong>
+                  <span>largest leak</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Your loss breakdown</p>
+                <h3>Where trades went wrong</h3>
+              </div>
+              <div class="loss-stack" id="loss-stack"></div>
+            </article>
+          </div>
+
+          <div class="grid-two">
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">What to change first</p>
+                <h3>Personal rules</h3>
+              </div>
+              <ul class="insight-list" id="personal-rules"></ul>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Model feedback</p>
+                <h3>Confirm the diagnosis</h3>
+              </div>
+              <p class="subtle">The user can rank the real reason a loss happened. This creates labeled feedback for better future diagnosis.</p>
+              <div class="feedback-options">
+                <button data-feedback="entry">Entry was too late</button>
+                <button data-feedback="exit">Exit plan was weak</button>
+                <button data-feedback="liquidity">Liquidity was ignored</button>
+                <button data-feedback="thesis">Original thesis was wrong</button>
+              </div>
+              <p class="feedback-note" id="feedback-note">No feedback submitted yet.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="case-view" class="view" aria-labelledby="case-heading">
+          <div class="case-layout">
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Case study frame</p>
+                <h3 id="case-heading">Why did I lose this trade?</h3>
+              </div>
+              <p class="case-copy">PolyCoach is a product concept for Polymarket users who want to move from reactive betting to evidence-based trading. It compares losing trades against profitable behavior on the same or similar markets.</p>
+              <div class="case-steps">
+                <div>
+                  <span>01</span>
+                  <strong>Diagnose the setup</strong>
+                  <p>Analyze odds, time remaining, market type, liquidity, and historical analogs.</p>
+                </div>
+                <div>
+                  <span>02</span>
+                  <strong>Compare behaviors</strong>
+                  <p>Show what profitable traders did differently from losing traders on the same trade.</p>
+                </div>
+                <div>
+                  <span>03</span>
+                  <strong>Coach the user</strong>
+                  <p>Turn every loss into ranked explanations, personal rules, and better future signals.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Trust model</p>
+                <h3>Product guardrails</h3>
+              </div>
+              <ul class="insight-list">
+                <li>Never claims a market will resolve a certain way.</li>
+                <li>Frames outputs as historical similarity and decision quality.</li>
+                <li>Flags small samples, one-hit-wonder wallets, and copied trades.</li>
+                <li>Separates observable behavior from financial advice.</li>
+                <li>Uses user-ranked feedback to improve explanations over time.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
