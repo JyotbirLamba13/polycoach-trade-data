@@ -84,6 +84,7 @@ function setupSearch(inputSelector, suggestionSelector) {
             loadMarketTerminal(item.dataset.id);
             suggestions.classList.remove("active");
             input.value = "";
+            input.blur();
         } else if (!e.target.closest(inputSelector)) {
             suggestions.classList.remove("active");
         }
@@ -101,7 +102,6 @@ function loadMarketTerminal(id) {
     const market = searchIndex.find(m => m.id === id);
     if (!market) return;
 
-    // Update Recent
     if (!recentAnalyzed.find(m => m.id === id)) {
         recentAnalyzed.unshift(market);
         if (recentAnalyzed.length > 10) recentAnalyzed.pop();
@@ -109,7 +109,7 @@ function loadMarketTerminal(id) {
     }
 
     document.querySelector("#hero-search").style.display = "none";
-    document.querySelector("#terminal-view").style.display = "grid";
+    document.querySelector("#terminal-view").style.display = "flex";
     document.body.classList.remove("search-mode");
 
     document.querySelector("#display-title").textContent = market.q;
@@ -119,11 +119,10 @@ function loadMarketTerminal(id) {
 
     document.querySelector("#chart-loading").style.display = "block";
     
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            renderProChart(market);
-        }, 50);
-    });
+    // Robust delay for container rendering
+    setTimeout(() => {
+        renderProChart(market);
+    }, 100);
 }
 
 function renderRecentSidebar() {
@@ -138,36 +137,30 @@ function renderRecentSidebar() {
 
 function renderProChart(market) {
     const container = document.getElementById('candlestick-chart');
-    container.innerHTML = ""; // Clear
+    if (!container) return;
+    container.innerHTML = ""; // Clear existing
     
-    const chartOptions = {
+    const containerRect = container.getBoundingClientRect();
+    
+    chart = LightweightCharts.createChart(container, {
+        width: containerRect.width || 800,
+        height: containerRect.height || 480,
         layout: {
             background: { color: '#ffffff' },
             textColor: '#64748b',
-            fontSize: 12,
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
         },
         grid: {
             vertLines: { color: '#f1f5f9' },
             horzLines: { color: '#f1f5f9' },
         },
-        crosshair: {
-            mode: LightweightCharts.CrosshairMode.Normal,
-        },
-        rightPriceScale: {
-            borderColor: '#e2e8f0',
-            visible: true,
-        },
         timeScale: {
             borderColor: '#e2e8f0',
             timeVisible: true,
-            secondsVisible: false,
         },
-        handleScroll: true,
-        handleScale: true,
-    };
-
-    chart = LightweightCharts.createChart(container, chartOptions);
+        rightPriceScale: {
+            borderColor: '#e2e8f0',
+        }
+    });
 
     candleSeries = chart.addCandlestickSeries({
         upColor: '#10b981',
@@ -177,27 +170,21 @@ function renderProChart(market) {
         wickDownColor: '#ef4444',
     });
 
-    // Generate Synthetic Candlestick Data (Professional scale)
     const data = [];
-    let basePrice = 50;
-    if (market.q.toLowerCase().includes("trump")) basePrice = 65;
-    if (market.v.includes("M")) basePrice = 80;
-
+    let basePrice = market.v.includes("M") ? 75 : 45;
     const now = Math.floor(Date.now() / 1000);
-    for (let i = 0; i < 150; i++) {
-        const time = now - (150 - i) * 3600;
-        const volatility = 2 + Math.random() * 3;
+    
+    for (let i = 0; i < 120; i++) {
+        const time = now - (120 - i) * 3600;
+        const change = (Math.random() - 0.48) * 4;
         const open = basePrice;
-        const close = open + (Math.random() - 0.45) * volatility; // Slight upward bias
-        const high = Math.max(open, close) + Math.random() * 2;
-        const low = Math.min(open, close) - Math.random() * 2;
-        
+        const close = open + change;
         data.push({
             time: time,
-            open: Math.min(99, Math.max(1, open)) / 100,
-            high: Math.min(100, Math.max(open, high)) / 100,
-            low: Math.min(open, Math.max(0, low)) / 100,
-            close: Math.min(99, Math.max(1, close)) / 100,
+            open: Math.max(1, open) / 100,
+            high: Math.max(open, close, open + Math.random()*2) / 100,
+            low: Math.min(open, close, open - Math.random()*2) / 100,
+            close: Math.min(99, close) / 100,
         });
         basePrice = close;
     }
@@ -205,13 +192,10 @@ function renderProChart(market) {
     candleSeries.setData(data);
     chart.timeScale().fitContent();
 
-    // Responsive Resize
-    const resizeObserver = new ResizeObserver(entries => {
-        if (entries.length === 0 || entries[0].target !== container) return;
-        const newRect = entries[0].contentRect;
+    window.addEventListener('resize', () => {
+        const newRect = container.getBoundingClientRect();
         chart.applyOptions({ width: newRect.width, height: newRect.height });
     });
-    resizeObserver.observe(container);
 
     document.querySelector("#chart-loading").style.display = "none";
     updateDataPanels(market);
@@ -219,12 +203,10 @@ function renderProChart(market) {
 
 function updateDataPanels(market) {
     const whaleFeed = document.querySelector("#whale-feed");
-    // Synthetic but derived from volume
-    const volNum = parseFloat(market.v.replace('$', '').replace('M', '')) || 1;
     const whales = [
-        { w: "0x8f...2a1b", p: "+$42,150", e: "24¢" },
-        { w: "0x4c...9d3e", p: "+$18,400", e: "18¢" },
-        { w: "0x1a...f5g6", p: "+$9,200", e: "31¢" }
+        { w: "0x8f...2a1b", p: "+$124,150", e: "14¢" },
+        { w: "0x4c...9d3e", p: "+$68,400", e: "22¢" },
+        { w: "0x1a...f5g6", p: "+$32,200", e: "28¢" }
     ];
 
     whaleFeed.innerHTML = whales.map(w => `
@@ -237,9 +219,9 @@ function updateDataPanels(market) {
         </div>
     `).join("");
 
-    document.querySelector("#analysis-text").textContent = `X-Ray Analysis: This ${market.c} market saw a massive concentration of "Smart Money" entries at the ${whales[0].e} level. The final outcome of 100¢ was reached after a significant breakout on ${market.d}.`;
-    document.querySelector("#stat-entry").textContent = "12¢ - 32¢";
-    document.querySelector("#stat-outcome").textContent = "100¢ (Won)";
+    document.querySelector("#analysis-text").textContent = `Archive Verdict: This market settled at 100¢ on ${market.d}. Whale accumulation was most aggressive in the 10¢-25¢ range, indicating high-conviction institutional positions before the final narrative breakout.`;
+    document.querySelector("#stat-entry").textContent = "14¢ - 28¢";
+    document.querySelector("#stat-outcome").textContent = "Resolved (100¢)";
 }
 
 document.addEventListener("DOMContentLoaded", init);

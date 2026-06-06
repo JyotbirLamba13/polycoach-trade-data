@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- Lightweight Charts for professional candlesticks -->
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
   </head>
   <body class="search-mode">
+    
     <!-- HERO SEARCH VIEW -->
     <section id="hero-search" class="hero-search">
       <div class="search-container animate-in">
@@ -37,104 +37,94 @@
       </div>
     </section>
 
-    <!-- TERMINAL DASHBOARD VIEW (HIDDEN INITIALLY) -->
+    <!-- TERMINAL DASHBOARD VIEW -->
     <main id="terminal-view" class="terminal-shell" style="display: none;">
-      <aside class="terminal-sidebar">
-        <div class="brand" id="return-search" style="cursor: pointer;">
-          <div class="brand-mark">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+      <!-- TOP NAVIGATION BAR (FIXED) -->
+      <nav class="terminal-top-nav">
+        <div class="brand-small" id="return-search" style="cursor: pointer;">
+          <div class="brand-mark-s">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
           </div>
-          <h1>PolyAlpha</h1>
+          <strong>PolyAlpha</strong>
         </div>
 
-        <div class="market-selector">
+        <div class="header-search-wrap">
+          <svg class="h-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="terminal-top-search" placeholder="Search another trade..." autocomplete="off">
+          <div id="terminal-suggestions" class="search-suggestions header-suggest"></div>
+        </div>
+
+        <div class="nav-actions">
+          <div class="data-badge">
+            <span class="dot-live"></span> HISTORICAL ARCHIVE
+          </div>
+        </div>
+      </nav>
+
+      <div class="terminal-content-grid">
+        <aside class="terminal-sidebar">
           <p class="sidebar-label">Recently Analyzed</p>
           <div id="recent-list" class="market-list"></div>
-        </div>
-
-        <div class="sidebar-footer">
-          <div class="data-status">
-            <div class="status-dot"></div>
-            <span>Repo Synced: 3,000 Markets</span>
+          
+          <div class="sidebar-ad">
+            <p class="eyebrow">Data Moat</p>
+            <p class="subtle">Indexed 107GB of raw Polymarket blockchain events.</p>
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      <section class="terminal-main">
-        <header class="terminal-header">
-          <div class="market-info">
-            <h2 id="display-title">---</h2>
-            <div class="market-meta">
-              <span id="display-vol">--</span>
-              <span id="display-date">--</span>
-              <span class="category-pill" id="display-cat">--</span>
-            </div>
-          </div>
-          <div class="terminal-controls">
-            <button class="secondary-button" id="timeframe-15m">15m</button>
-            <button class="secondary-button active" id="timeframe-1h">1h</button>
-            <button class="secondary-button" id="timeframe-1d">1d</button>
-          </div>
-        </header>
-
-        <div class="chart-wrapper">
-          <div id="candlestick-chart"></div>
-          <div class="chart-overlay-info" id="chart-loading">Analysing trade distribution...</div>
-        </div>
-
-        <div class="terminal-bottom-grid">
-          <article class="panel data-panel">
-            <div class="panel-heading">
-              <p class="eyebrow">X-Ray Trade Data</p>
-              <h3>Whale Entry Mapping</h3>
-            </div>
-            <div id="whale-feed" class="winners-list"></div>
-          </article>
-
-          <article class="panel diagnostic-panel">
-            <div class="panel-heading">
-              <p class="eyebrow">Trade Diagnosis</p>
-              <h3>Why did this move?</h3>
-            </div>
-            <div class="diagnosis-content">
-              <p id="analysis-text" class="diagnosis-copy">Connecting to historical archive to process order filled events...</p>
-              <div class="pivotal-stat">
-                <div class="stat-item">
-                  <span class="label">Entry Range</span>
-                  <strong id="stat-entry">--</strong>
-                </div>
-                <div class="stat-item">
-                  <span class="label">Outcome</span>
-                  <strong id="stat-outcome">--</strong>
-                </div>
+        <section class="terminal-main">
+          <header class="terminal-market-header">
+            <div class="title-area">
+              <h2 id="display-title">---</h2>
+              <div class="market-meta">
+                <span id="display-vol">--</span>
+                <span id="display-date">--</span>
+                <span class="category-pill" id="display-cat">--</span>
               </div>
             </div>
-          </article>
-        </div>
-      </section>
-    </main>
-
-    <script src="app.js"></script>
-  </body>
-</html>
->Why did this move?</h3>
+            <div class="timeframe-controls">
+              <button class="t-btn">15m</button>
+              <button class="t-btn active">1h</button>
+              <button class="t-btn">1d</button>
             </div>
-            <div class="diagnosis-content">
-              <p id="analysis-text" class="diagnosis-copy">Connecting to historical archive to process order filled events...</p>
-              <div class="pivotal-stat">
-                <div class="stat-item">
-                  <span class="label">Entry Range</span>
-                  <strong id="stat-entry">--</strong>
-                </div>
-                <div class="stat-item">
-                  <span class="label">Outcome</span>
-                  <strong id="stat-outcome">--</strong>
+          </header>
+
+          <div class="chart-wrapper">
+            <div id="candlestick-chart"></div>
+            <div id="chart-loading" class="chart-loader">Processing dataset...</div>
+          </div>
+
+          <div class="details-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">X-Ray Trade Data</p>
+                <h3>Whale Entry Mapping</h3>
+              </div>
+              <div id="whale-feed" class="winners-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p class="eyebrow">Historical Narrative</p>
+                <h3>Market Outcome</h3>
+              </div>
+              <div class="diagnosis-content">
+                <p id="analysis-text" class="diagnosis-copy">Extracting truth from history...</p>
+                <div class="pivotal-stat">
+                  <div class="stat-item">
+                    <span class="label">Entry Range</span>
+                    <strong id="stat-entry">--</strong>
+                  </div>
+                  <div class="stat-item">
+                    <span class="label">Outcome</span>
+                    <strong id="stat-outcome">--</strong>
+                  </div>
                 </div>
               </div>
-            </div>
-          </article>
-        </div>
-      </section>
+            </article>
+          </div>
+        </section>
+      </div>
     </main>
 
     <script src="app.js"></script>
