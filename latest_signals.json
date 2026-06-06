@@ -1,0 +1,74 @@
+[
+  {
+    "question": "Will Donald Trump win the 2024 US Presidential Election?",
+    "volume": 1531479284.5,
+    "category": "Presidential Election Winner 2024",
+    "created": "2024-01-04"
+  },
+  {
+    "question": "Will Kamala Harris win the 2024 US Presidential Election?",
+    "volume": 1037039118.19,
+    "category": "Presidential Election Winner 2024",
+    "created": "2024-01-04"
+  },
+  {
+    "question": "Will Donald Trump be inaugurated?",
+    "volume": 400409526.89,
+    "category": "Who will be inaugurated as President? ",
+    "created": "2024-11-02"
+  },
+  {
+    "question": "Will the Sacramento Kings win the 2025 NBA Finals?",
+    "volume": 378011506.51,
+    "category": "NBA Champion",
+    "created": "2024-09-24"
+  },
+  {
+    "question": "Will Nicolae Ciuc\u0103 win the 2024 Romanian Presidential election?",
+    "volume": 326507670.56,
+    "category": "(Old) Romania Election",
+    "created": "2024-11-08"
+  },
+  {
+    "question": "US x Iran ceasefire extended by April 22, 2026?",
+    "volume": 278527401.21,
+    "category": "US x Iran ceasefire extended by...?",
+    "created": "2026-04-21"
+  },
+  {
+    "question": "US forces enter Iran by April 30?",
+    "volume": 269049107.08,
+    "category": "US forces enter Iran by..?",
+    "created": "2026-03-18"
+  },
+  {
+    "question": "Will Zelenskyy wear a suit before July?",
+    "volume": 242231180.27,
+    "category": "Will Zelenskyy wear a suit before July?",
+    "created": "2025-05-23"
+  },
+  {
+    "question": "Will any other Republican Politician win the 2024 US Presidential Election?",
+    "volume": 241655099.85,
+    "category": "Presidential Election Winner 2024",
+    "created": "2024-01-07"
+  },
+  {
+    "question": "Fed decreases interest rates by 50+ bps after January 2026 meeting?",
+    "volume": 235065166.64,
+    "category": "Fed decision in January?",
+    "created": "2025-09-17"
+  },
+  {
+    "question": "Fed increases interest rates by 25+ bps after January 2026 meeting?",
+    "volume": 216455743.15,
+    "category": "Fed decision in January?",
+    "created": "2025-09-17"
+  },
+  {
+    "question": "US x Iran ceasefire by April 7?",
+    "volume": 173696184.18,
+    "category": "US x Iran ceasefire by...?",
+    "created": "2026-03-24"
+  }
+]

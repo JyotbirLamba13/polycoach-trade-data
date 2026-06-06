@@ -351,6 +351,28 @@ function renderProfile(data) {
   });
 }
 
+async function loadSignals() {
+  const list = document.querySelector("#signals-list");
+  try {
+    const response = await fetch('latest_signals.json');
+    const signals = await response.json();
+    
+    list.innerHTML = signals.map(sig => `
+      <div class="signal-card">
+        <strong>${sig.question}</strong>
+        <div class="signal-meta">
+          <span class="signal-volume">$${(sig.volume / 1000000).toFixed(1)}M Vol</span>
+          <span>${sig.category}</span>
+        </div>
+      </div>
+    `).join("");
+    
+    animateList("#signals-list");
+  } catch (e) {
+    list.innerHTML = '<p class="subtle">Data feed unavailable. Run analysis script.</p>';
+  }
+}
+
 document.querySelector("#trade-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const title = document.querySelector("#market-input").value;
@@ -375,3 +397,4 @@ document.querySelectorAll(".feedback-options button").forEach((button) => {
 
 renderTrade(tuneScenario(scenarios.crypto, 72, "medium"));
 renderProfile(profiles.all);
+loadSignals();
