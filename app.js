@@ -425,7 +425,7 @@ async function loadSignals() {
     const signals = await response.json();
     
     list.innerHTML = signals.map(sig => `
-      <div class="signal-card">
+      <div class="signal-card" data-question="${sig.question.replace(/"/g, '&quot;')}" style="cursor: pointer;">
         <strong>${sig.question}</strong>
         <div class="signal-meta">
           <span class="signal-volume">$${(sig.volume / 1000000).toFixed(1)}M Vol</span>
@@ -435,6 +435,25 @@ async function loadSignals() {
     `).join("");
     
     animateList("#signals-list");
+
+    // Add click listeners for One-Click Analysis
+    document.querySelectorAll(".signal-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const question = card.dataset.question;
+        const input = document.querySelector("#market-input");
+        input.value = question;
+        
+        // Visual feedback
+        card.style.borderColor = "var(--blue)";
+        card.style.background = "var(--blue-soft)";
+        
+        // Trigger analysis
+        document.querySelector("#trade-form").dispatchEvent(new Event("submit"));
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
   } catch (e) {
     list.innerHTML = '<p class="subtle">Data feed unavailable. Run analysis script.</p>';
   }
@@ -460,6 +479,48 @@ document.querySelectorAll(".feedback-options button").forEach((button) => {
     button.classList.add("selected");
     document.querySelector("#feedback-note").textContent = `Feedback captured: "${button.textContent}". Future model versions would use this as labeled loss-attribution data.`;
   });
+});
+
+const coachOverlay = document.querySelector("#ai-coach-overlay");
+const coachMessages = document.querySelector("#coach-messages");
+const coachInput = document.querySelector("#coach-input");
+
+function addMessage(text, sender) {
+  const msg = document.createElement("div");
+  msg.className = `message ${sender}`;
+  msg.textContent = text;
+  coachMessages.appendChild(msg);
+  coachMessages.scrollTop = coachMessages.scrollHeight;
+}
+
+function handleCoachResponse(input) {
+  const val = input.toLowerCase();
+  let response = "I'm analyzing the historical data from the repository to help you. Ask me about 'whales', 'risk', or 'winning trades'.";
+  
+  if (val.includes("whale") || val.includes("heavy")) {
+    response = "Whales are currently active in the 2024 Presidential markets. My data shows entries over $50k at the 70c level, which suggests high conviction but a compressed risk/reward ratio.";
+  } else if (val.includes("risk") || val.includes("lose")) {
+    response = "The biggest risk right now is 'Late Momentum'. Many traders are entering after a 20c move. Profitable traders in the archive entered earlier during the 'accumulation' phase.";
+  } else if (val.includes("winning") || val.includes("profit")) {
+    response = "The top winning trade in my archive made over $300k by entering a Romanian Presidential market at 8c. The key was long-duration positioning before the volume spike.";
+  }
+  
+  setTimeout(() => addMessage(response, "coach"), 800);
+}
+
+document.querySelector("#open-coach").addEventListener("click", () => coachOverlay.classList.add("active"));
+document.querySelector("#close-coach").addEventListener("click", () => coachOverlay.classList.remove("active"));
+
+document.querySelector("#send-coach").addEventListener("click", () => {
+  const text = coachInput.value.trim();
+  if (!text) return;
+  addMessage(text, "user");
+  coachInput.value = "";
+  handleCoachResponse(text);
+});
+
+coachInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") document.querySelector("#send-coach").click();
 });
 
 renderTrade(tuneScenario(scenarios.crypto, 72, "medium"));

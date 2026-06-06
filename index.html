@@ -12,6 +12,27 @@
   </head>
   <body>
     <main class="shell">
+      <div id="ai-coach-overlay" class="coach-overlay">
+        <div class="coach-container">
+          <header class="coach-header">
+            <div class="coach-identity">
+              <div class="status-dot"></div>
+              <strong>AI Trading Coach</strong>
+            </div>
+            <button id="close-coach" aria-label="Close chat">×</button>
+          </header>
+          <div class="coach-messages" id="coach-messages">
+            <div class="message coach">
+              Hello! I'm analyzing your latest signals. Want to know why whales are entering the election markets, or should we look at your recent risk diagnosis?
+            </div>
+          </div>
+          <div class="coach-input-area">
+            <input type="text" id="coach-input" placeholder="Ask about market patterns..." autocomplete="off">
+            <button id="send-coach">Send</button>
+          </div>
+        </div>
+      </div>
+
       <aside class="sidebar" aria-label="Product navigation">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">
@@ -48,6 +69,13 @@
           <p class="eyebrow">Product thesis</p>
           <p class="method-copy">Losing traders do not need more raw data. They need feedback loops that explain entry quality, timing, risk, and what profitable traders did differently.</p>
         </section>
+        
+        <button class="primary-button coach-trigger" id="open-coach">
+          <span class="tab-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          AI Trading Coach
+        </button>
       </aside>
 
       <section class="workspace">
