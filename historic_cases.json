@@ -1,0 +1,182 @@
+[
+  {
+    "id": "253591",
+    "question": "Will Donald Trump win the 2024 US Presidential Election?",
+    "category": "Presidential Election Winner 2024",
+    "volume": "$1531.5M",
+    "end_date": "2024-11-05",
+    "diagnosis": "Stable settlement",
+    "pivotal_price": "99\u00a2",
+    "trade_sample": [
+      {
+        "p": 1.0,
+        "v": 94.18,
+        "t": "16:52"
+      },
+      {
+        "p": 1.0,
+        "v": 5.39,
+        "t": "16:52"
+      },
+      {
+        "p": 0.0,
+        "v": 0.0,
+        "t": "16:52"
+      },
+      {
+        "p": 1.0,
+        "v": 904.23,
+        "t": "16:51"
+      },
+      {
+        "p": 1.0,
+        "v": 328.82,
+        "t": "16:51"
+      }
+    ]
+  },
+  {
+    "id": "253597",
+    "question": "Will Kamala Harris win the 2024 US Presidential Election?",
+    "category": "Presidential Election Winner 2024",
+    "volume": "$1037.0M",
+    "end_date": "2024-11-04",
+    "diagnosis": "Late-stage volatility squeeze",
+    "pivotal_price": "0\u00a2",
+    "trade_sample": [
+      {
+        "p": 0.0,
+        "v": 0.14,
+        "t": "19:27"
+      },
+      {
+        "p": 0.0,
+        "v": 0.15,
+        "t": "19:27"
+      },
+      {
+        "p": 0.0,
+        "v": 0.09,
+        "t": "19:27"
+      },
+      {
+        "p": 0.0,
+        "v": 5.0,
+        "t": "19:27"
+      },
+      {
+        "p": 0.0,
+        "v": 1.9,
+        "t": "19:26"
+      }
+    ]
+  },
+  {
+    "id": "511754",
+    "question": "Will Donald Trump be inaugurated?",
+    "category": "Who will be inaugurated as President? ",
+    "volume": "$400.4M",
+    "end_date": "2025-01-20",
+    "diagnosis": "Stable settlement",
+    "pivotal_price": "99\u00a2",
+    "trade_sample": [
+      {
+        "p": 1.0,
+        "v": 1038.96,
+        "t": "23:33"
+      },
+      {
+        "p": 1.0,
+        "v": 310.26,
+        "t": "23:26"
+      },
+      {
+        "p": 1.0,
+        "v": 101.42,
+        "t": "23:20"
+      },
+      {
+        "p": 1.0,
+        "v": 0.72,
+        "t": "23:14"
+      },
+      {
+        "p": 1.0,
+        "v": 1.26,
+        "t": "23:12"
+      }
+    ]
+  },
+  {
+    "id": "507892",
+    "question": "Will the Sacramento Kings win the 2025 NBA Finals?",
+    "category": "NBA Champion",
+    "volume": "$378.0M",
+    "end_date": "2025-06-23",
+    "diagnosis": "Stable settlement",
+    "pivotal_price": "0\u00a2",
+    "trade_sample": [
+      {
+        "p": 0.0,
+        "v": 1.05,
+        "t": "11:41"
+      },
+      {
+        "p": 0.0,
+        "v": 1.05,
+        "t": "09:33"
+      },
+      {
+        "p": 0.0,
+        "v": 1.29,
+        "t": "05:08"
+      },
+      {
+        "p": 0.0,
+        "v": 1.22,
+        "t": "03:04"
+      },
+      {
+        "p": 0.0,
+        "v": 1.28,
+        "t": "20:02"
+      }
+    ]
+  },
+  {
+    "id": "512340",
+    "question": "Will Nicolae Ciuc\u0103 win the 2024 Romanian Presidential election?",
+    "category": "(Old) Romania Election",
+    "volume": "$326.5M",
+    "end_date": "2024-12-08",
+    "diagnosis": "Late-stage volatility squeeze",
+    "pivotal_price": "99\u00a2",
+    "trade_sample": [
+      {
+        "p": 1.0,
+        "v": 1.13,
+        "t": "14:45"
+      },
+      {
+        "p": 1.0,
+        "v": 1.22,
+        "t": "14:02"
+      },
+      {
+        "p": 1.0,
+        "v": 1.23,
+        "t": "13:51"
+      },
+      {
+        "p": 1.0,
+        "v": 1.12,
+        "t": "12:48"
+      },
+      {
+        "p": 1.0,
+        "v": 202.01,
+        "t": "12:12"
+      }
+    ]
+  }
+]

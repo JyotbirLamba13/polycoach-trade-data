@@ -163,6 +163,41 @@ const profiles = {
 const navTabs = document.querySelectorAll(".nav-tab");
 const views = document.querySelectorAll(".view");
 
+async function loadHistoricCases() {
+  const grid = document.querySelector("#historic-grid");
+  try {
+    const response = await fetch('historic_cases.json');
+    const cases = await response.json();
+    
+    grid.innerHTML = cases.map(c => `
+      <div class="historic-card">
+        <div>
+          <span class="historic-diagnosis">${c.diagnosis}</span>
+          <h4>${c.question}</h4>
+          <div class="historic-info">
+            <span>${c.category}</span>
+            <span>Resolved: ${c.end_date}</span>
+          </div>
+          <div class="mini-chart">
+            ${c.trade_sample.map(t => `<div class="chart-bar" style="height: ${t.p * 100}%" title="Price: ${t.p}, Vol: $${t.v}"></div>`).join("")}
+          </div>
+        </div>
+        <div class="historic-stats">
+          <strong>${c.pivotal_price}</strong>
+          <span>Final Price</span>
+          <br>
+          <strong>${c.volume}</strong>
+          <span>Total Vol</span>
+        </div>
+      </div>
+    `).join("");
+    
+    animateList("#historic-grid");
+  } catch (e) {
+    grid.innerHTML = '<p class="subtle">Archive unavailable. Run analysis script.</p>';
+  }
+}
+
 navTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     const target = tab.dataset.view;
@@ -170,7 +205,7 @@ navTabs.forEach((tab) => {
     views.forEach((view) => view.classList.toggle("active", view.id === `${target}-view`));
     
     if (target === "case") {
-      animateList(".case-steps");
+      loadHistoricCases();
       animateList("#case-view .insight-list");
     }
   });
