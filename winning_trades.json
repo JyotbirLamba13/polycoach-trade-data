@@ -1,0 +1,122 @@
+[
+  {
+    "market": "Will Kamala Harris win the 2024 US Presidential Election?",
+    "wallet": "0x1165...89E9",
+    "entry_price": "6\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$70,470",
+    "profit": "$950,845",
+    "raw_profit": 950845.8166666667,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Kamala Harris win the 2024 US Presidential Election?",
+    "wallet": "0xb830...B382",
+    "entry_price": "7\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$50,000",
+    "profit": "$664,285",
+    "raw_profit": 664285.7142857142,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Donald Trump be inaugurated?",
+    "wallet": "0x64c8...73cE",
+    "entry_price": "1\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$4,888",
+    "profit": "$439,554",
+    "raw_profit": 439554.7563636364,
+    "date": "2025-01-01"
+  },
+  {
+    "market": "Will Donald Trump win the 2024 US Presidential Election?",
+    "wallet": "0x5557...6F2C",
+    "entry_price": "7\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$30,000",
+    "profit": "$370,000",
+    "raw_profit": 370000.0,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Kamala Harris win the 2024 US Presidential Election?",
+    "wallet": "0x4315...992c",
+    "entry_price": "11\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$47,174",
+    "profit": "$363,034",
+    "raw_profit": 363034.9265217391,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Kamala Harris win the 2024 US Presidential Election?",
+    "wallet": "0xdb75...0252",
+    "entry_price": "11\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$46,037",
+    "profit": "$354,286",
+    "raw_profit": 354286.6630434783,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Donald Trump win the 2024 US Presidential Election?",
+    "wallet": "0xE5c0...3f84",
+    "entry_price": "8\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$30,890",
+    "profit": "$345,817",
+    "raw_profit": 345817.9887804878,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Donald Trump be inaugurated?",
+    "wallet": "0xc658...b784",
+    "entry_price": "4\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$9,425",
+    "profit": "$195,482",
+    "raw_profit": 195482.89565217387,
+    "date": "2024-11-08"
+  },
+  {
+    "market": "Will Donald Trump win the 2024 US Presidential Election?",
+    "wallet": "0x8f55...0B54",
+    "entry_price": "11\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$21,406",
+    "profit": "$171,448",
+    "raw_profit": 171448.69567567567,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Donald Trump win the 2024 US Presidential Election?",
+    "wallet": "0x6761...A94F",
+    "entry_price": "20\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$38,762",
+    "profit": "$152,186",
+    "raw_profit": 152186.3647783251,
+    "date": "2024-11-06"
+  },
+  {
+    "market": "Will Donald Trump be inaugurated?",
+    "wallet": "0xf267...37FA",
+    "entry_price": "4\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$4,004",
+    "profit": "$96,101",
+    "raw_profit": 96101.04,
+    "date": "2024-12-13"
+  },
+  {
+    "market": "Will Donald Trump be inaugurated?",
+    "wallet": "0xE1CC...07AF",
+    "entry_price": "18\u00a2",
+    "exit_price": "100\u00a2",
+    "invested": "$4,830",
+    "profit": "$21,712",
+    "raw_profit": 21712.731318681323,
+    "date": "2024-11-05"
+  }
+]

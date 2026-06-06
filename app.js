@@ -198,6 +198,32 @@ async function loadHistoricCases() {
   }
 }
 
+async function loadWinningTrades() {
+  const list = document.querySelector("#winners-list");
+  try {
+    const response = await fetch('winning_trades.json');
+    const winners = await response.json();
+    
+    list.innerHTML = winners.map(w => `
+      <div class="winner-card">
+        <div class="winner-header">
+          <strong>${w.market}</strong>
+          <span class="winner-profit">+${w.profit}</span>
+        </div>
+        <div class="winner-details">
+          <div class="winner-detail-item">Wallet <span>${w.wallet}</span></div>
+          <div class="winner-detail-item">Entry <span>${w.entry_price}</span></div>
+          <div class="winner-detail-item">Invested <span>${w.invested}</span></div>
+        </div>
+      </div>
+    `).join("");
+    
+    animateList("#winners-list");
+  } catch (e) {
+    list.innerHTML = '<p class="subtle">Hall of Fame unavailable.</p>';
+  }
+}
+
 navTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     const target = tab.dataset.view;
@@ -207,6 +233,12 @@ navTabs.forEach((tab) => {
     if (target === "case") {
       loadHistoricCases();
       animateList("#case-view .insight-list");
+    }
+    
+    if (target === "profile") {
+      loadWinningTrades();
+      animateList("#loss-stack");
+      animateList("#personal-rules");
     }
   });
 });

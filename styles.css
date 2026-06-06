@@ -889,14 +889,84 @@ tbody tr:last-child td {
   color: var(--ink);
   display: block;
 }
-
 .historic-stats span {
   font-size: 10px;
   color: var(--muted);
   text-transform: uppercase;
 }
 
+/* Winners List */
+.winners-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.winner-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: #f8fafc;
+  transition: var(--transition);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.winner-card:hover {
+  background: #f1f5f9;
+  transform: translateX(4px);
+  border-color: var(--green);
+}
+
+.winner-card.visible {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.winner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.winner-header strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.winner-profit {
+  color: var(--green);
+  font-weight: 800;
+  font-size: 18px;
+  font-family: var(--font-display);
+}
+
+.winner-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.winner-detail-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.winner-detail-item span {
+  color: var(--ink);
+  font-size: 12px;
+  text-transform: none;
+  margin-top: 2px;
+}
+
 .loss-row span:first-child {
+...
   font-weight: 600;
   color: var(--ink);
 }

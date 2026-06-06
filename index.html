@@ -220,23 +220,14 @@
           <div class="profile-grid">
             <article class="panel profile-summary">
               <div class="panel-heading">
-                <p class="eyebrow">Trader archetype</p>
-                <h3 id="archetype">Late momentum buyer</h3>
+                <p class="eyebrow">Trader Hall of Fame</p>
+                <h3>Winning Trades Archive</h3>
               </div>
-              <p id="archetype-copy">This profile often enters after a visible move has already happened. The trader is directionally right more often than their realized PnL suggests, but late entries compress upside and increase reversal risk.</p>
-              <div class="metric-row">
-                <div>
-                  <strong id="profile-pnl">-$1,842</strong>
-                  <span>estimated PnL</span>
-                </div>
-                <div>
-                  <strong id="profile-win">46%</strong>
-                  <span>win rate</span>
-                </div>
-                <div>
-                  <strong id="profile-leak">Entry timing</strong>
-                  <span>largest leak</span>
-                </div>
+              <p>Top realized PnL transactions from the repository. We track early entries by whales that resulted in massive settlement payouts.</p>
+              
+              <div class="winners-list" id="winners-list">
+                <!-- Data from winning_trades.json will be injected here -->
+                <p class="subtle">Loading winning trades...</p>
               </div>
             </article>
 
