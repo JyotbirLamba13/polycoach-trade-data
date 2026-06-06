@@ -3,18 +3,44 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PolyAlpha | Prediction Market Terminal</title>
-    <meta name="description" content="Visualizing the history of prediction markets. Explore whale movements, price action, and historical trade data.">
+    <title>PolyAlpha | Historical Terminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lightweight Charts for professional candlesticks -->
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
   </head>
-  <body>
-    <main class="terminal-shell">
+  <body class="search-mode">
+    <!-- HERO SEARCH VIEW -->
+    <section id="hero-search" class="hero-search">
+      <div class="search-container animate-in">
+        <div class="brand large">
+          <div class="brand-mark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+          </div>
+          <h1>PolyAlpha</h1>
+        </div>
+        <p class="hero-tagline">Search 3,000+ historical Polymarket trades. Discover what happened.</p>
+        
+        <div class="search-box">
+          <input type="text" id="main-search" placeholder="Type a trade or market (e.g. Trump, BTC, Fed...)" autocomplete="off">
+          <div id="search-suggestions" class="search-suggestions"></div>
+        </div>
+        
+        <div class="quick-links">
+          <span>Trending:</span>
+          <button class="pill" data-search="Trump">Trump 2024</button>
+          <button class="pill" data-search="Bitcoin">Bitcoin</button>
+          <button class="pill" data-search="Interest">Fed Rates</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TERMINAL DASHBOARD VIEW (HIDDEN INITIALLY) -->
+    <main id="terminal-view" class="terminal-shell" style="display: none;">
       <aside class="terminal-sidebar">
-        <div class="brand">
+        <div class="brand" id="return-search" style="cursor: pointer;">
           <div class="brand-mark">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
           </div>
@@ -22,87 +48,74 @@
         </div>
 
         <div class="market-selector">
-          <p class="sidebar-label">Featured Markets</p>
-          <div id="market-list" class="market-list">
-            <!-- Populated from historic_cases.json -->
+          <div class="mini-search-box">
+            <input type="text" id="sidebar-search" placeholder="New search...">
           </div>
+          <p class="sidebar-label">Recently Analyzed</p>
+          <div id="recent-list" class="market-list"></div>
         </div>
 
         <div class="sidebar-footer">
-          <button class="primary-button" id="open-coach">
-            <span class="tab-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            </span>
-            Insights Assistant
-          </button>
+          <div class="data-status">
+            <div class="status-dot"></div>
+            <span>Repo Synced: 3,000 Markets</span>
+          </div>
         </div>
       </aside>
 
       <section class="terminal-main">
         <header class="terminal-header">
           <div class="market-info">
-            <h2 id="current-market-title">Select a Market</h2>
+            <h2 id="display-title">---</h2>
             <div class="market-meta">
-              <span id="current-market-vol">$0M Vol</span>
-              <span id="current-market-date">Resolved: --</span>
+              <span id="display-vol">--</span>
+              <span id="display-date">--</span>
+              <span class="category-pill" id="display-cat">--</span>
             </div>
           </div>
-          <div class="terminal-status">
-            <span class="status-dot"></span> Historical Archive Mode
+          <div class="terminal-controls">
+            <button class="secondary-button" id="timeframe-15m">15m</button>
+            <button class="secondary-button active" id="timeframe-1h">1h</button>
+            <button class="secondary-button" id="timeframe-1d">1d</button>
           </div>
         </header>
 
-        <div class="chart-container">
-          <canvas id="mainChart"></canvas>
-          <div id="whale-markers"></div>
+        <div class="chart-wrapper">
+          <div id="candlestick-chart"></div>
+          <div class="chart-overlay-info" id="chart-loading">Analysing trade distribution...</div>
         </div>
 
         <div class="terminal-bottom-grid">
-          <article class="panel">
+          <article class="panel data-panel">
             <div class="panel-heading">
-              <p class="eyebrow">Trade Distribution</p>
-              <h3>Whale Activity & Large Orders</h3>
+              <p class="eyebrow">X-Ray Trade Data</p>
+              <h3>Whale Entry Mapping</h3>
             </div>
-            <div id="whale-trades-feed" class="winners-list">
-              <!-- Populated from winning_trades.json for specific market -->
-            </div>
+            <div id="whale-feed" class="winners-list"></div>
           </article>
 
-          <article class="panel">
+          <article class="panel diagnostic-panel">
             <div class="panel-heading">
-              <p class="eyebrow">Market Narrative</p>
-              <h3>Historical Outcome</h3>
+              <p class="eyebrow">Trade Diagnosis</p>
+              <h3>Why did this move?</h3>
             </div>
-            <div class="narrative-content">
-              <p id="market-diagnosis" class="diagnosis-copy">Select a market to see the historical analysis of how and why it settled.</p>
-              <div class="pattern-badge" id="pattern-badge">---</div>
+            <div class="diagnosis-content">
+              <p id="analysis-text" class="diagnosis-copy">Connecting to historical archive to process order filled events...</p>
+              <div class="pivotal-stat">
+                <div class="stat-item">
+                  <span class="label">Entry Range</span>
+                  <strong id="stat-entry">--</strong>
+                </div>
+                <div class="stat-item">
+                  <span class="label">Outcome</span>
+                  <strong id="stat-outcome">--</strong>
+                </div>
+              </div>
             </div>
           </article>
         </div>
       </section>
     </main>
-
-    <!-- AI Coach Overlay (Retained for B2C Assistant) -->
-    <div id="ai-coach-overlay" class="coach-overlay">
-      <div class="coach-container">
-        <header class="coach-header">
-          <div class="coach-identity">
-            <div class="status-dot"></div>
-            <strong>Terminal Assistant</strong>
-          </div>
-          <button id="close-coach">×</button>
-        </header>
-        <div class="coach-messages" id="coach-messages">
-          <div class="message coach">
-            Welcome to the PolyAlpha archive. I can help explain the price action and whale entries on these historical charts. Which market are you analyzing?
-          </div>
-        </div>
-        <div class="coach-input-area">
-          <input type="text" id="coach-input" placeholder="Ask about this market's history..." autocomplete="off">
-          <button id="send-coach">Send</button>
-        </div>
-      </div>
-    </div>
 
     <script src="app.js"></script>
   </body>
