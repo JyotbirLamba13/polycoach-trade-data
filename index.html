@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PolyAlpha | Historical Terminal</title>
+    <title>PolyAlpha | High-End Prediction Terminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
   </head>
-  <body class="search-mode">
+  <body class="dark-terminal search-mode">
     
-    <!-- HERO SEARCH VIEW -->
+    <!-- HERO SEARCH VIEW (TRADINGTERMINAL STYLE) -->
     <section id="hero-search" class="hero-search">
       <div class="search-container animate-in">
         <div class="brand large">
@@ -21,107 +21,105 @@
           </div>
           <h1>PolyAlpha</h1>
         </div>
-        <p class="hero-tagline">Search 3,000+ historical Polymarket trades. Discover what happened.</p>
+        <p class="hero-tagline">The professional gateway to Polymarket history. Analyze 3,000+ trades.</p>
         
         <div class="search-box">
-          <input type="text" id="main-search" placeholder="Type a trade or market (e.g. Trump, BTC, Fed...)" autocomplete="off">
+          <input type="text" id="main-search" placeholder="Search by market, wallet, or event (e.g. Trump, BTC, 0x...)" autocomplete="off">
           <div id="search-suggestions" class="search-suggestions"></div>
         </div>
         
         <div class="quick-links">
-          <span>Trending:</span>
           <button class="pill" data-search="Trump">Trump 2024</button>
           <button class="pill" data-search="Bitcoin">Bitcoin</button>
-          <button class="pill" data-search="Interest">Fed Rates</button>
+          <button class="pill" data-search="Interest">Interest Rates</button>
         </div>
       </div>
     </section>
 
-    <!-- TERMINAL DASHBOARD VIEW -->
+    <!-- PRO TERMINAL DASHBOARD -->
     <main id="terminal-view" class="terminal-shell" style="display: none;">
-      <!-- TOP NAVIGATION BAR (FIXED) -->
-      <nav class="terminal-top-nav">
-        <div class="brand-small" id="return-search" style="cursor: pointer;">
-          <div class="brand-mark-s">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+      <!-- TERMINAL TOP NAV -->
+      <nav class="pro-nav">
+        <div class="nav-left">
+          <div class="brand-small" id="return-search">
+            <div class="brand-mark-s">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+            </div>
+            <strong>PolyAlpha</strong>
           </div>
-          <strong>PolyAlpha</strong>
+          <div class="pro-search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="terminal-top-search" placeholder="Quick Search (K)..." autocomplete="off">
+            <div id="terminal-suggestions" class="search-suggestions terminal-suggest"></div>
+          </div>
         </div>
 
-        <div class="header-search-wrap">
-          <svg class="h-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="terminal-top-search" placeholder="Search another trade..." autocomplete="off">
-          <div id="terminal-suggestions" class="search-suggestions header-suggest"></div>
-        </div>
-
-        <div class="nav-actions">
-          <div class="data-badge">
-            <span class="dot-live"></span> HISTORICAL ARCHIVE
+        <div class="nav-right">
+          <div class="data-pulse">
+            <span class="pulse-dot"></span> ARCHIVE ONLINE
           </div>
+          <div class="repo-badge">3,000+ MARKETS SYNCED</div>
         </div>
       </nav>
 
-      <div class="terminal-content-grid">
-        <aside class="terminal-sidebar">
-          <p class="sidebar-label">Recently Analyzed</p>
+      <div class="terminal-layout">
+        <aside class="sidebar-recent">
+          <p class="section-label">RECENTLY ANALYZED</p>
           <div id="recent-list" class="market-list"></div>
-          
-          <div class="sidebar-ad">
-            <p class="eyebrow">Data Moat</p>
-            <p class="subtle">Indexed 107GB of raw Polymarket blockchain events.</p>
-          </div>
         </aside>
 
-        <section class="terminal-main">
-          <header class="terminal-market-header">
-            <div class="title-area">
+        <section class="main-terminal">
+          <div class="market-header">
+            <div class="header-left">
+              <div class="category-tag" id="display-cat">--</div>
               <h2 id="display-title">---</h2>
-              <div class="market-meta">
-                <span id="display-vol">--</span>
-                <span id="display-date">--</span>
-                <span class="category-pill" id="display-cat">--</span>
+              <div class="market-stats">
+                <div class="stat"><span class="label">VOLUME</span> <strong id="display-vol">--</strong></div>
+                <div class="stat"><span class="label">RESOLVED</span> <strong id="display-date">--</strong></div>
               </div>
             </div>
-            <div class="timeframe-controls">
-              <button class="t-btn">15m</button>
-              <button class="t-btn active">1h</button>
-              <button class="t-btn">1d</button>
+            <div class="header-right">
+              <div class="time-controls">
+                <button class="t-btn active">1H</button>
+                <button class="t-btn">4H</button>
+                <button class="t-btn">1D</button>
+              </div>
             </div>
-          </header>
-
-          <div class="chart-wrapper">
-            <div id="candlestick-chart"></div>
-            <div id="chart-loading" class="chart-loader">Processing dataset...</div>
           </div>
 
-          <div class="details-grid">
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">X-Ray Trade Data</p>
-                <h3>Whale Entry Mapping</h3>
-              </div>
-              <div id="whale-feed" class="winners-list"></div>
-            </article>
+          <div class="chart-container-pro">
+            <div id="candlestick-chart"></div>
+            <div id="chart-loading" class="chart-status">SYNCING BLOCKCHAIN DATA...</div>
+          </div>
 
-            <article class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow">Historical Narrative</p>
-                <h3>Market Outcome</h3>
-              </div>
-              <div class="diagnosis-content">
-                <p id="analysis-text" class="diagnosis-copy">Extracting truth from history...</p>
-                <div class="pivotal-stat">
-                  <div class="stat-item">
-                    <span class="label">Entry Range</span>
+          <div class="bottom-data-grid">
+            <div class="data-panel whale-tracking">
+              <header class="panel-header">
+                <h3>WHALE ENTRY MAPPING</h3>
+                <span class="label-pro">LIVE HISTORICAL MAPPING</span>
+              </header>
+              <div id="whale-feed" class="whale-feed-list"></div>
+            </div>
+
+            <div class="data-panel narrative-panel">
+              <header class="panel-header">
+                <h3>MARKET DIAGNOSIS</h3>
+                <span class="label-pro">AI VERDICT</span>
+              </header>
+              <div class="analysis-box">
+                <p id="analysis-text" class="analysis-copy">Awaiting market selection...</p>
+                <div class="pivotal-stats">
+                  <div class="p-stat">
+                    <span>ACCUMULATION ZONE</span>
                     <strong id="stat-entry">--</strong>
                   </div>
-                  <div class="stat-item">
-                    <span class="label">Outcome</span>
+                  <div class="p-stat">
+                    <span>FINAL SETTLEMENT</span>
                     <strong id="stat-outcome">--</strong>
                   </div>
                 </div>
               </div>
-            </article>
+            </div>
           </div>
         </section>
       </div>

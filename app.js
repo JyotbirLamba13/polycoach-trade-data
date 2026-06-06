@@ -5,6 +5,7 @@ let recentAnalyzed = [];
 let selectedIndex = -1;
 
 async function init() {
+    // 1. Load Data
     try {
         const response = await fetch('search_index.json');
         searchIndex = await response.json();
@@ -12,15 +13,18 @@ async function init() {
         console.error("Failed to load search index", e);
     }
 
+    // 2. Setup All Search Inputs
     setupSearch("#main-search", "#search-suggestions");
     setupSearch("#terminal-top-search", "#terminal-suggestions");
 
+    // 3. Navigation
     document.querySelector("#return-search").addEventListener("click", () => {
         document.querySelector("#hero-search").style.display = "flex";
         document.querySelector("#terminal-view").style.display = "none";
         document.body.classList.add("search-mode");
     });
 
+    // 4. Quick Pills
     document.querySelectorAll(".pill").forEach(p => {
         p.addEventListener("click", () => {
             const input = document.querySelector("#main-search");
@@ -45,13 +49,13 @@ function setupSearch(inputSelector, suggestionSelector) {
 
         const filtered = searchIndex
             .filter(m => m.q.toLowerCase().includes(val))
-            .slice(0, 8);
+            .slice(0, 10);
 
         if (filtered.length > 0) {
             suggestions.innerHTML = filtered.map((m, i) => `
                 <div class="suggestion-item" data-id="${m.id}" id="sug-${i}">
                     <strong>${m.q}</strong>
-                    <span>${m.c} • ${m.v} Volume</span>
+                    <span>${m.c} • ${m.v} Volume • ${m.d}</span>
                 </div>
             `).join("");
             suggestions.classList.add("active");
@@ -79,8 +83,8 @@ function setupSearch(inputSelector, suggestionSelector) {
     });
 
     document.addEventListener("click", (e) => {
-        const item = e.target.closest(suggestionSelector + " .suggestion-item");
-        if (item) {
+        if (e.target.closest(".suggestion-item")) {
+            const item = e.target.closest(".suggestion-item");
             loadMarketTerminal(item.dataset.id);
             suggestions.classList.remove("active");
             input.value = "";
@@ -102,27 +106,32 @@ function loadMarketTerminal(id) {
     const market = searchIndex.find(m => m.id === id);
     if (!market) return;
 
+    // Transition UI
+    document.querySelector("#hero-search").style.display = "none";
+    const terminal = document.querySelector("#terminal-view");
+    terminal.style.display = "flex";
+    document.body.classList.remove("search-mode");
+
+    // Update Meta
+    document.querySelector("#display-title").textContent = market.q;
+    document.querySelector("#display-vol").textContent = market.v;
+    document.querySelector("#display-date").textContent = market.d;
+    document.querySelector("#display-cat").textContent = market.c;
+
+    // Recent Sidebar
     if (!recentAnalyzed.find(m => m.id === id)) {
         recentAnalyzed.unshift(market);
-        if (recentAnalyzed.length > 10) recentAnalyzed.pop();
+        if (recentAnalyzed.length > 8) recentAnalyzed.pop();
         renderRecentSidebar();
     }
 
-    document.querySelector("#hero-search").style.display = "none";
-    document.querySelector("#terminal-view").style.display = "flex";
-    document.body.classList.remove("search-mode");
-
-    document.querySelector("#display-title").textContent = market.q;
-    document.querySelector("#display-vol").textContent = `${market.v} Vol`;
-    document.querySelector("#display-date").textContent = `Resolved: ${market.d}`;
-    document.querySelector("#display-cat").textContent = market.c;
-
+    // Prepare Chart
     document.querySelector("#chart-loading").style.display = "block";
     
-    // Robust delay for container rendering
+    // DELAYED RENDER TO FIX BLANK CANVAS
     setTimeout(() => {
-        renderProChart(market);
-    }, 100);
+        renderDarkChart(market);
+    }, 200);
 }
 
 function renderRecentSidebar() {
@@ -130,98 +139,105 @@ function renderRecentSidebar() {
     list.innerHTML = recentAnalyzed.map(m => `
         <div class="market-item" onclick="loadMarketTerminal('${m.id}')">
             <h4>${m.q}</h4>
-            <div class="meta">${m.v} Volume</div>
+            <div class="meta">${m.v} Vol</div>
         </div>
     `).join("");
 }
 
-function renderProChart(market) {
+function renderDarkChart(market) {
     const container = document.getElementById('candlestick-chart');
     if (!container) return;
-    container.innerHTML = ""; // Clear existing
-    
-    const containerRect = container.getBoundingClientRect();
-    
+    container.innerHTML = ""; // Hard clear
+
+    const w = container.clientWidth || 800;
+    const h = container.clientHeight || 480;
+
     chart = LightweightCharts.createChart(container, {
-        width: containerRect.width || 800,
-        height: containerRect.height || 480,
+        width: w,
+        height: h,
         layout: {
-            background: { color: '#ffffff' },
-            textColor: '#64748b',
+            background: { color: '#15191e' },
+            textColor: '#d1d4dc',
+            fontSize: 11,
+            fontFamily: "'JetBrains Mono', monospace",
         },
         grid: {
-            vertLines: { color: '#f1f5f9' },
-            horzLines: { color: '#f1f5f9' },
-        },
-        timeScale: {
-            borderColor: '#e2e8f0',
-            timeVisible: true,
+            vertLines: { color: '#2b2f36' },
+            horzLines: { color: '#2b2f36' },
         },
         rightPriceScale: {
-            borderColor: '#e2e8f0',
-        }
+            borderColor: '#2b2f36',
+        },
+        timeScale: {
+            borderColor: '#2b2f36',
+            timeVisible: true,
+        },
+        crosshair: {
+            mode: LightweightCharts.CrosshairMode.Normal,
+            vertLine: { color: '#707a8a', labelBackgroundColor: '#2962ff' },
+            horzLine: { color: '#707a8a', labelBackgroundColor: '#2962ff' },
+        },
     });
 
     candleSeries = chart.addCandlestickSeries({
-        upColor: '#10b981',
-        downColor: '#ef4444',
+        upColor: '#00c076',
+        downColor: '#ff3b30',
         borderVisible: false,
-        wickUpColor: '#10b981',
-        wickDownColor: '#ef4444',
+        wickUpColor: '#00c076',
+        wickDownColor: '#ff3b30',
     });
 
+    // Generate High-Fidelity Professional Data
     const data = [];
-    let basePrice = market.v.includes("M") ? 75 : 45;
+    let price = market.v.includes("M") ? 65 : 35;
     const now = Math.floor(Date.now() / 1000);
     
-    for (let i = 0; i < 120; i++) {
-        const time = now - (120 - i) * 3600;
-        const change = (Math.random() - 0.48) * 4;
-        const open = basePrice;
-        const close = open + change;
+    for (let i = 0; i < 200; i++) {
+        const time = now - (200 - i) * 3600;
+        const vol = 1 + Math.random() * 4;
+        const open = price;
+        const close = open + (Math.random() - 0.47) * vol;
         data.push({
             time: time,
             open: Math.max(1, open) / 100,
-            high: Math.max(open, close, open + Math.random()*2) / 100,
-            low: Math.min(open, close, open - Math.random()*2) / 100,
+            high: Math.max(open, close, open + Math.random() * 2) / 100,
+            low: Math.min(open, close, open - Math.random() * 2) / 100,
             close: Math.min(99, close) / 100,
         });
-        basePrice = close;
+        price = close;
     }
 
     candleSeries.setData(data);
     chart.timeScale().fitContent();
 
-    window.addEventListener('resize', () => {
-        const newRect = container.getBoundingClientRect();
-        chart.applyOptions({ width: newRect.width, height: newRect.height });
+    // Auto-Resize
+    const observer = new ResizeObserver(() => {
+        chart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
     });
+    observer.observe(container);
 
     document.querySelector("#chart-loading").style.display = "none";
-    updateDataPanels(market);
+    updateTerminalPanels(market);
 }
 
-function updateDataPanels(market) {
+function updateTerminalPanels(market) {
     const whaleFeed = document.querySelector("#whale-feed");
     const whales = [
-        { w: "0x8f...2a1b", p: "+$124,150", e: "14¢" },
-        { w: "0x4c...9d3e", p: "+$68,400", e: "22¢" },
-        { w: "0x1a...f5g6", p: "+$32,200", e: "28¢" }
+        { w: "0x8f...2a1b", p: "+$241,150", e: "12¢" },
+        { w: "0x4c...9d3e", p: "+$92,400", e: "18¢" },
+        { w: "0x1a...f5g6", p: "+$41,200", e: "24¢" }
     ];
 
     whaleFeed.innerHTML = whales.map(w => `
-        <div class="winner-card animate-in">
-            <div>
-                <div class="wallet">${w.w}</div>
-                <div class="meta">Entry: ${w.e} • Full Position</div>
-            </div>
-            <div class="pnl">${w.p}</div>
+        <div class="winner-card">
+            <span class="wallet">${w.w}</span>
+            <span class="pnl">${w.p}</span>
         </div>
     `).join("");
 
-    document.querySelector("#analysis-text").textContent = `Archive Verdict: This market settled at 100¢ on ${market.d}. Whale accumulation was most aggressive in the 10¢-25¢ range, indicating high-conviction institutional positions before the final narrative breakout.`;
-    document.querySelector("#stat-entry").textContent = "14¢ - 28¢";
-    document.querySelector("#stat-outcome").textContent = "Resolved (100¢)";
+    document.querySelector("#analysis-text").textContent = `X-Ray Analytics: Market resolved at 100¢. Institutional accumulation (Whale Volume) detected between ${whales[0].e} and ${whales[2].e}. This followed a historical 'Narrative Squeeze' pattern typical of high-volume ${market.c} events.`;
+    document.querySelector("#stat-entry").textContent = "12¢ - 24¢";
+    document.querySelector("#stat-outcome").textContent = "100¢ (RESOLVED)";
 }
 
 document.addEventListener("DOMContentLoaded", init);
