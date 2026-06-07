@@ -42,6 +42,7 @@ def main():
 
     con = duckdb.connect()
     con.execute("INSTALL httpfs; LOAD httpfs;")
+    con.execute("SET temp_directory='/tmp/duckdb_spill';")  # keep spill out of the repo
     # market_id -> yes_price mapping table
     vals = ",".join(f"('{mid}',{yp})" for mid, yp in ids.items())
     con.execute(f"CREATE TEMP TABLE yp(market_id VARCHAR, yes DOUBLE);")
@@ -66,16 +67,13 @@ def main():
       SELECT market_id, address,
         sum(CASE WHEN lower(dir) LIKE 'b%' THEN token_amount ELSE -token_amount END) AS net_tok,
         sum(CASE WHEN lower(dir) LIKE 'b%' THEN -usd_amount ELSE usd_amount END)      AS net_usd,
-        sum(CASE WHEN lower(dir) LIKE 'b%' THEN usd_amount ELSE 0 END)                AS buy_usd,
-        sum(CASE WHEN lower(dir) LIKE 'b%' THEN token_amount ELSE 0 END)              AS buy_tok,
+        sum(usd_amount) AS gross_usd,
         count(*) AS trades, min(timestamp) AS t0, max(timestamp) AS t1
       FROM u GROUP BY market_id, address
     ),
     pnl AS (
-      SELECT a.*, j.yes, buy_usd AS invested,
-        (a.net_usd + a.net_tok * j.yes) AS pnl,
-        CASE WHEN a.buy_tok>0 THEN a.buy_usd/a.buy_tok ELSE NULL END AS avg_buy
-      FROM agg a JOIN yp j USING (market_id) WHERE a.buy_usd > 200
+      SELECT a.*, (a.net_usd + a.net_tok * j.yes) AS pnl
+      FROM agg a JOIN yp j USING (market_id) WHERE a.gross_usd > 1000
     ),
     ranked AS (
       SELECT *,
@@ -83,7 +81,7 @@ def main():
         row_number() OVER (PARTITION BY market_id ORDER BY pnl ASC)  AS rk_los
       FROM pnl
     )
-    SELECT market_id, address, invested, pnl, avg_buy, yes, trades, t0, t1,
+    SELECT market_id, address, gross_usd, pnl, net_tok, trades, t0, t1,
            (rk_win<=5) AS is_win, (rk_los<=5) AS is_los
     FROM ranked WHERE rk_win<=5 OR rk_los<=5
     """
@@ -109,17 +107,13 @@ def main():
         return f"${int(n)}"
 
     out = {}
-    for (mid, addr, invested, pnl, avg_buy, yes, trades, t0_, t1_, is_win, is_los) in rows:
+    for (mid, addr, gross_usd, pnl, net_tok, trades, t0_, t1_, is_win, is_los) in rows:
         rec = out.setdefault(mid, {"winners": [], "losers": []})
-        entry = round((avg_buy or 0) * 100)
-        exit_ = round((yes or 0) * 100)
-        ret = round(pnl / invested * 100) if invested else 0
-        side = "YES" if (yes and yes >= 0.5) else "NO"
+        # Side = net directional exposure (positive token balance = net long YES)
+        side = "YES" if (net_tok or 0) >= 0 else "NO"
         item = {
             "addr": addr, "side": side,
-            "entry": f"{entry}¢", "exit": f"{exit_}¢",
-            "ret": f"{'+' if ret>=0 else ''}{ret}%",
-            "invested": fmt_money(invested),
+            "traded": fmt_money(gross_usd),
             "pnl": ("+" if pnl >= 0 else "-") + fmt_money(pnl),
             "held": f"{ts_days(t0_, t1_)}d",
             "trades": int(trades),

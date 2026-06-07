@@ -106,13 +106,13 @@ def faqs(m, whales):
         if whales and whales.get("winners"):
             w = whales["winners"][0]
             out.append(("Who made the most money on this market?",
-                f"Wallet {short_addr(w['addr'])} backed the {w['side']} side, entering near "
-                f"{w['entry']}, for a realized {w['pnl']} ({w['ret']}) on {w['invested']} deployed."))
+                f"Wallet {short_addr(w['addr'])} took the {w['side']} side and realized a "
+                f"{w['pnl']} profit, trading {w['traded']} across {w['trades']:,} trades over {w['held']}."))
         if whales and whales.get("losers"):
             l = whales["losers"][0]
             out.append(("Who lost the most on this market?",
-                f"Wallet {short_addr(l['addr'])} backed the {l['side']} side and lost {l['pnl'][1:]} "
-                f"({l['ret']}) on {l['invested']} deployed."))
+                f"Wallet {short_addr(l['addr'])} took the {l['side']} side and lost {l['pnl'][1:]}, "
+                f"trading {l['traded']} across {l['trades']:,} trades."))
     else:
         out.append((f"Has \"{m['question']}\" resolved yet?",
             f"No — it is still open. Yes currently trades at {pct}¢ "
@@ -132,12 +132,11 @@ def trade_table(rows, kind):
     val_col = "Profit" if pos else "Loss"
     body = "".join(
         f"<tr><td class='w'><a class='wlink' href='{poly_profile(r['addr'])}' target='_blank' rel='noopener'>{esc(short_addr(r['addr']))} ↗</a></td>"
-        f"<td>{esc(r['side'])}</td><td>{esc(r['entry'])}</td><td>{esc(r['exit'])}</td>"
-        f"<td class='{val_cls}'>{esc(r['ret'])}</td><td>{esc(r['invested'])}</td>"
-        f"<td class='{val_cls}'>{esc(r['pnl'])}</td><td>{esc(r['held'])}</td></tr>"
+        f"<td>{esc(r['side'])}</td><td>{esc(r['traded'])}</td>"
+        f"<td class='{val_cls}'>{esc(r['pnl'])}</td><td>{r['trades']:,}</td><td>{esc(r['held'])}</td></tr>"
         for r in rows)
-    return (f"<table class='tbl'><thead><tr><th>Wallet</th><th>Side</th><th>Entry</th><th>Exit</th>"
-            f"<th>Return</th><th>Invested</th><th>{val_col}</th><th>Held</th></tr></thead>"
+    return (f"<table class='tbl'><thead><tr><th>Wallet</th><th>Side</th><th>Traded</th>"
+            f"<th>{val_col}</th><th>Trades</th><th>Held</th></tr></thead>"
             f"<tbody>{body}</tbody></table>")
 
 # ── HTML shell ──────────────────────────────────────────────────────────────────
