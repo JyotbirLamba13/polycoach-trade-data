@@ -173,7 +173,7 @@ async function init() {
     setTimeout(() => {
         animateCounter('#stat-markets', searchIndex.length, 1600, v => v.toLocaleString());
         animateCounter('#stat-volume',  Math.round(totalVolB * 10), 1600, v => `$${(v / 10).toFixed(1)}B+`);
-        animateCounter('#stat-whales',  Object.keys(whalesById).length || 800, 1600, v => v.toLocaleString());
+        animateCounter('#stat-whales',  293, 1600, v => `${v}M+`);  // on-chain trades in source dataset
     }, 650);
 
     typewriterPlaceholder(document.querySelector('#main-search'), [
