@@ -19,7 +19,7 @@ import json, os, re, html, ast, sys
 from collections import defaultdict
 
 # ── Config ────────────────────────────────────────────────────────────────────
-BASE_URL  = "https://jyotbirlamba13.github.io/polycoach-trade-data"  # change on custom domain
+BASE_URL  = "https://polycoach-trade-data.pages.dev"  # Cloudflare Pages; change on custom domain
 SITE_NAME = "PolyAlpha"
 TAGLINE   = "Polymarket Trade Intelligence"
 ROOT      = os.path.dirname(os.path.abspath(__file__))

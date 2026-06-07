@@ -12,4 +12,4 @@ Allow: /
 User-agent: Googlebot
 Allow: /
 
-Sitemap: https://jyotbirlamba13.github.io/polycoach-trade-data/sitemap.xml
+Sitemap: https://polycoach-trade-data.pages.dev/sitemap.xml

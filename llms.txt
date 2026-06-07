@@ -1,44 +1,40 @@
 # PolyAlpha — Polymarket Trade Intelligence
 
-> PolyAlpha is a Polymarket trade-analysis archive covering 3000 resolved
-> prediction markets. Each market page documents the outcome, total volume, top winning
-> and losing trades, and the entry/exit timing patterns behind the result.
+> PolyAlpha analyzes 3000 Polymarket markets with real outcomes and real wallet-level winners/losers computed from on-chain trade data.
 
 ## Key Pages
 
-- [All Markets](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/): Index of every analyzed market, browsable by category.
-- [Terminal](https://jyotbirlamba13.github.io/polycoach-trade-data/): Interactive search and candlestick terminal.
+- [All Markets](https://polycoach-trade-data.pages.dev/markets/): searchable index of every market.
+- [Terminal](https://polycoach-trade-data.pages.dev/): interactive search terminal.
 
 ## Categories
 
-- [2026 FIFA World Cup Winner ](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/2026-fifa-world-cup-winner/): 49 markets.
-- [US strikes Iran by...?](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/us-strikes-iran-by/): 47 markets.
-- [Democratic Presidential Nominee 2028](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/democratic-presidential-nominee-2028/): 44 markets.
-- [Presidential Election Winner 2028](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/presidential-election-winner-2028/): 36 markets.
-- [Republican Presidential Nominee 2028](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/republican-presidential-nominee-2028/): 35 markets.
-- [Champions League Winner](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/champions-league-winner/): 33 markets.
-- [Super Bowl Champion 2025](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/super-bowl-champion-2025/): 32 markets.
-- [Big Game Champion 2026](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/big-game-champion-2026/): 32 markets.
-- [NBA Champion](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/nba-champion/): 30 markets.
-- [Who will Trump nominate as Fed Chair?](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/who-will-trump-nominate-as-fed-chair/): 25 markets.
-- [What price will Bitcoin hit in February?](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/what-price-will-bitcoin-hit-in-february/): 23 markets.
-- [UEFA Champions League Winner ](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/uefa-champions-league-winner/): 23 markets.
-- [Eurovision Winner 2026](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/eurovision-winner-2026/): 23 markets.
-- [2026 NBA Champion](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/2026-nba-champion/): 22 markets.
-- [Republican VP nominee?](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/republican-vp-nominee/): 21 markets.
-- [Premier League Winner](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/premier-league-winner/): 20 markets.
-- [NFL MVP](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/nfl-mvp/): 20 markets.
-- [Portugal Presidential Election](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/portugal-presidential-election/): 19 markets.
-- [Eurovision Winner 2025](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/eurovision-winner-2025/): 19 markets.
-- [2025 National Heads-Up Poker Championship Winner](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/2025-national-heads-up-poker-championship-winner/): 18 markets.
-- [F1 Drivers Champion](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/f1-drivers-champion/): 18 markets.
-- [What price will Bitcoin hit in January?](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/what-price-will-bitcoin-hit-in-january/): 18 markets.
-- [F1 Drivers' Champion](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/f1-drivers-champion/): 18 markets.
-- [Presidential Election Winner 2024](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/presidential-election-winner-2024/): 17 markets.
-- [Popular Vote Winner 2024](https://jyotbirlamba13.github.io/polycoach-trade-data/markets/category/popular-vote-winner-2024/): 17 markets.
+- [2026 FIFA World Cup Winner ](https://polycoach-trade-data.pages.dev/markets/category/2026-fifa-world-cup-winner/): 49 markets.
+- [US strikes Iran by...?](https://polycoach-trade-data.pages.dev/markets/category/us-strikes-iran-by/): 47 markets.
+- [Democratic Presidential Nominee 2028](https://polycoach-trade-data.pages.dev/markets/category/democratic-presidential-nominee-2028/): 44 markets.
+- [Presidential Election Winner 2028](https://polycoach-trade-data.pages.dev/markets/category/presidential-election-winner-2028/): 36 markets.
+- [Republican Presidential Nominee 2028](https://polycoach-trade-data.pages.dev/markets/category/republican-presidential-nominee-2028/): 35 markets.
+- [Champions League Winner](https://polycoach-trade-data.pages.dev/markets/category/champions-league-winner/): 33 markets.
+- [Big Game Champion 2026](https://polycoach-trade-data.pages.dev/markets/category/big-game-champion-2026/): 32 markets.
+- [Super Bowl Champion 2025](https://polycoach-trade-data.pages.dev/markets/category/super-bowl-champion-2025/): 32 markets.
+- [NBA Champion](https://polycoach-trade-data.pages.dev/markets/category/nba-champion/): 30 markets.
+- [Who will Trump nominate as Fed Chair?](https://polycoach-trade-data.pages.dev/markets/category/who-will-trump-nominate-as-fed-chair/): 25 markets.
+- [What price will Bitcoin hit in February?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-february/): 23 markets.
+- [UEFA Champions League Winner ](https://polycoach-trade-data.pages.dev/markets/category/uefa-champions-league-winner/): 23 markets.
+- [Eurovision Winner 2026](https://polycoach-trade-data.pages.dev/markets/category/eurovision-winner-2026/): 23 markets.
+- [2026 NBA Champion](https://polycoach-trade-data.pages.dev/markets/category/2026-nba-champion/): 22 markets.
+- [Republican VP nominee?](https://polycoach-trade-data.pages.dev/markets/category/republican-vp-nominee/): 21 markets.
+- [NFL MVP](https://polycoach-trade-data.pages.dev/markets/category/nfl-mvp/): 20 markets.
+- [Premier League Winner](https://polycoach-trade-data.pages.dev/markets/category/premier-league-winner/): 20 markets.
+- [Portugal Presidential Election](https://polycoach-trade-data.pages.dev/markets/category/portugal-presidential-election/): 19 markets.
+- [Eurovision Winner 2025](https://polycoach-trade-data.pages.dev/markets/category/eurovision-winner-2025/): 19 markets.
+- [F1 Drivers Champion](https://polycoach-trade-data.pages.dev/markets/category/f1-drivers-champion/): 18 markets.
+- [What price will Bitcoin hit in January?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-january/): 18 markets.
+- [2025 National Heads-Up Poker Championship Winner](https://polycoach-trade-data.pages.dev/markets/category/2025-national-heads-up-poker-championship-winner/): 18 markets.
+- [F1 Drivers' Champion](https://polycoach-trade-data.pages.dev/markets/category/f1-drivers-champion/): 18 markets.
+- [Romania: Bucharest Mayoral Election](https://polycoach-trade-data.pages.dev/markets/category/romania-bucharest-mayoral-election/): 17 markets.
+- [Presidential Election Winner 2024](https://polycoach-trade-data.pages.dev/markets/category/presidential-election-winner-2024/): 17 markets.
 
 ## About
 
-PolyAlpha aggregates public Polymarket data into per-market intelligence pages: outcome,
-volume, winners, losers and timing. Verified wallet trades are labelled; other examples are
-illustrative reconstructions of timing patterns. Not financial advice.
+Real Polymarket data: outcomes, dates and volume from public Polymarket sources; winners/losers computed from on-chain Polygon trade records. Not financial advice.
