@@ -134,18 +134,46 @@ function typewriterPlaceholder(input, texts, speed = 75) {
     tick();
 }
 
+let realById = {};      // id -> full real market record (markets_real.json)
+let whalesById = {};    // id -> { winners, losers, trades, lo, hi } (whales_real.json)
+
+function fmtVol(n) {
+    n = Math.abs(n || 0);
+    if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
+    if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
+    if (n >= 1e3) return `$${(n / 1e3).toFixed(0)}K`;
+    return `$${Math.round(n)}`;
+}
+function realYes(m) {
+    try { return parseFloat(JSON.parse(m.outcome_prices.replace(/'/g, '"'))[0]); }
+    catch (e) { return null; }
+}
+
 async function init() {
     try {
-        const r = await fetch('search_index.json');
-        searchIndex = await r.json();
-    } catch (e) { console.error("Failed to load search index", e); }
+        const r = await fetch('markets_real.json');
+        const raw = await r.json();
+        realById = {};
+        searchIndex = raw.map(m => {
+            realById[m.id] = m;
+            return {
+                id: m.id, q: m.question, c: m.event_title || 'Other',
+                d: (m.end_date || '').slice(0, 10), v: fmtVol(m.volume), _real: m,
+            };
+        });
+    } catch (e) { console.error("Failed to load markets_real.json", e); }
+
+    try {
+        whalesById = await (await fetch('whales_real.json')).json();
+    } catch (e) { whalesById = {}; }
 
     initHeroCanvas();
 
+    const totalVolB = searchIndex.reduce((s, m) => s + (m._real.volume || 0), 0) / 1e9;
     setTimeout(() => {
-        animateCounter('#stat-markets', 3241, 1600, v => v.toLocaleString());
-        animateCounter('#stat-volume',  1200, 1600, v => `$${(v / 1000).toFixed(1)}B+`);
-        animateCounter('#stat-whales',  847,  1600, v => v.toLocaleString());
+        animateCounter('#stat-markets', searchIndex.length, 1600, v => v.toLocaleString());
+        animateCounter('#stat-volume',  Math.round(totalVolB * 10), 1600, v => `$${(v / 10).toFixed(1)}B+`);
+        animateCounter('#stat-whales',  Object.keys(whalesById).length || 800, 1600, v => v.toLocaleString());
     }, 650);
 
     typewriterPlaceholder(document.querySelector('#main-search'), [
@@ -261,6 +289,8 @@ function loadMarketTerminal(id) {
     document.querySelector("#display-date").textContent = market.d;
     document.querySelector("#display-cat").textContent = market.c;
 
+    renderMarketSummary(market);
+
     if (!recentAnalyzed.find(m => m.id === id)) {
         recentAnalyzed.unshift(market);
         if (recentAnalyzed.length > 8) recentAnalyzed.pop();
@@ -269,6 +299,44 @@ function loadMarketTerminal(id) {
 
     document.querySelector("#chart-loading").style.display = "block";
     setTimeout(() => renderDarkChart(market, currentInterval), 200);
+}
+
+// Default real summary shown on every market load (not gated behind a trade click)
+function renderMarketSummary(market) {
+    const m = market._real || {};
+    const w = whalesById[market.id];
+    const resolved = m.closed === 1;
+    const yes = realYes(m);
+    const pct = yes == null ? null : Math.round(yes * 100);
+
+    // Full report link -> SEO page
+    const fr = document.querySelector("#full-report");
+    if (fr && m.slug) fr.href = `markets/${m.slug}/`;
+
+    const outcome = resolved
+        ? `Resolved ${yes >= 0.5 ? 'YES' : 'NO'} at ${pct}¢`
+        : `Open · trading ${pct}¢ (YES)`;
+    const opened = (m.created_at || '').slice(0, 10);
+
+    const cells = [
+        ['VOLUME', market.v],
+        ['TRADES', w ? w.trades.toLocaleString() : '—'],
+        ['HIGH', w ? `${w.hi}¢` : '—'],
+        ['LOW', w ? `${w.lo}¢` : '—'],
+        ['OUTCOME', outcome],
+    ];
+    const verb = resolved ? 'resolved' : 'is currently trading at';
+    const tradesTxt = w ? `${w.trades.toLocaleString()} trades` : 'thousands of trades';
+    const rangeTxt = w ? ` Price ranged from ${w.lo}¢ to ${w.hi}¢.` : '';
+    const summaryLine =
+        `${market.q} drew ${market.v} in volume across ${tradesTxt} on Polymarket.${rangeTxt} ` +
+        `It ${verb} ${pct == null ? '' : pct + '¢'}${resolved ? ` (${yes >= 0.5 ? 'YES' : 'NO'})` : ''}.`;
+
+    document.querySelector("#market-summary").innerHTML = `
+        <p class="summary-line">${summaryLine}</p>
+        <div class="summary-cells">
+            ${cells.map(([l, v]) => `<div class="sc"><span class="sc-l">${l}</span><span class="sc-v">${v}</span></div>`).join('')}
+        </div>`;
 }
 
 function renderRecentSidebar() {
@@ -382,6 +450,9 @@ function renderDarkChart(market, interval = 3600) {
             vertLine: { color: "#707a8a", labelBackgroundColor: "#2962ff" },
             horzLine: { color: "#707a8a", labelBackgroundColor: "#2962ff" },
         },
+        // Let the PAGE scroll over the chart by default; drag still pans, crosshair still works.
+        handleScroll: { mouseWheel: false, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
+        handleScale: { mouseWheel: false, pinch: true, axisPressedMouseMove: true },
     });
 
     candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {

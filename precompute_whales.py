@@ -20,7 +20,8 @@ Usage:
 import duckdb, json, sys, os, ast, time
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-U = "https://huggingface.co/datasets/SII-WANGZJ/Polymarket_data/resolve/main/users.parquet"
+# trades.parquet prunes by market_id (fast); users.parquet is user-sorted (full scan, slow)
+T = "https://huggingface.co/datasets/SII-WANGZJ/Polymarket_data/resolve/main/trades.parquet"
 OUT = os.path.join(ROOT, "whales_real.json")
 
 def yes_price(m):
@@ -48,27 +49,33 @@ def main():
 
     idlist = ",".join(f"'{mid}'" for mid in ids)
     t0 = time.time()
-    # One scan: aggregate per (market_id, address), then keep top5 + bottom5 by pnl.
+    # Read filtered trades once; split each trade into its maker & taker as per-user rows.
+    # direction is 'BUY'/'SELL'; buy = acquiring the (YES-unified) token.
     q = f"""
-    WITH agg AS (
+    WITH base AS (
+      SELECT market_id, maker, taker, maker_direction AS md, taker_direction AS td,
+             usd_amount, token_amount, timestamp
+      FROM read_parquet('{T}') WHERE market_id IN ({idlist})
+    ),
+    u AS (
+      SELECT market_id, maker AS address, md AS dir, usd_amount, token_amount, timestamp FROM base
+      UNION ALL
+      SELECT market_id, taker AS address, td AS dir, usd_amount, token_amount, timestamp FROM base
+    ),
+    agg AS (
       SELECT market_id, address,
-        sum(CASE WHEN direction='buy' THEN token_amount ELSE -token_amount END) AS net_tok,
-        sum(CASE WHEN direction='sell' THEN usd_amount ELSE -usd_amount END)    AS net_usd,
-        sum(CASE WHEN direction='buy' THEN usd_amount ELSE 0 END)               AS invested,
-        sum(CASE WHEN direction='buy' THEN token_amount ELSE 0 END)            AS buy_tok,
-        sum(CASE WHEN direction='buy' THEN usd_amount ELSE 0 END)              AS buy_usd,
-        count(*) AS trades,
-        min(timestamp) AS t0, max(timestamp) AS t1
-      FROM read_parquet('{U}')
-      WHERE market_id IN ({idlist})
-      GROUP BY market_id, address
+        sum(CASE WHEN lower(dir) LIKE 'b%' THEN token_amount ELSE -token_amount END) AS net_tok,
+        sum(CASE WHEN lower(dir) LIKE 'b%' THEN -usd_amount ELSE usd_amount END)      AS net_usd,
+        sum(CASE WHEN lower(dir) LIKE 'b%' THEN usd_amount ELSE 0 END)                AS buy_usd,
+        sum(CASE WHEN lower(dir) LIKE 'b%' THEN token_amount ELSE 0 END)              AS buy_tok,
+        count(*) AS trades, min(timestamp) AS t0, max(timestamp) AS t1
+      FROM u GROUP BY market_id, address
     ),
     pnl AS (
-      SELECT a.*, j.yes,
+      SELECT a.*, j.yes, buy_usd AS invested,
         (a.net_usd + a.net_tok * j.yes) AS pnl,
         CASE WHEN a.buy_tok>0 THEN a.buy_usd/a.buy_tok ELSE NULL END AS avg_buy
-      FROM agg a JOIN yp j USING (market_id)
-      WHERE a.invested > 200
+      FROM agg a JOIN yp j USING (market_id) WHERE a.buy_usd > 200
     ),
     ranked AS (
       SELECT *,
@@ -82,6 +89,10 @@ def main():
     """
     rows = con.execute(q).fetchall()
     print(f"  query returned {len(rows)} rows in {time.time()-t0:.0f}s", flush=True)
+    # per-market summary stats: total trades + real price high/low (for the summary panel)
+    stats = con.execute(f"""SELECT market_id, count(*), min(price), max(price)
+        FROM read_parquet('{T}') WHERE market_id IN ({idlist}) GROUP BY market_id""").fetchall()
+    tc = {r[0]: {"trades": int(r[1]), "lo": r[2], "hi": r[3]} for r in stats}
 
     def ts_days(a, b):
         # timestamps are unix (sec or ms)
@@ -121,7 +132,13 @@ def main():
     for mid, rec in out.items():
         w = [i for _, i in sorted(rec["winners"], key=lambda x: -x[0])][:5]
         l = [i for _, i in sorted(rec["losers"], key=lambda x: x[0])][:5]
-        clean[mid] = {"winners": w, "losers": l}
+        s = tc.get(mid, {})
+        clean[mid] = {
+            "winners": w, "losers": l,
+            "trades": s.get("trades", 0),
+            "lo": round((s.get("lo") or 0) * 100),
+            "hi": round((s.get("hi") or 0) * 100),
+        }
 
     json.dump(clean, open(OUT, "w"), indent=0)
     print(f"✓ Wrote {OUT}: {len(clean)} markets with real whales", flush=True)
