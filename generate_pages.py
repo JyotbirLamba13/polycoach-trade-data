@@ -3,14 +3,14 @@
 PolyAlpha SEO Page Generator (REAL DATA)
 ----------------------------------------
 Builds one SEO page per market from REAL Polymarket data:
-  * markets_real.json  — real outcome, open/close dates, status, slug, volume
+  * markets_real.json  : real outcome, open/close dates, status, slug, volume
                          (from SII-WANGZJ/Polymarket_data markets.parquet)
-  * whales_real.json   — real top winners/losers with real wallets + PnL
+  * whales_real.json   : real top winners/losers with real wallets + PnL
                          (from users.parquet; precompute_whales.py). Optional;
                          markets without it show a backfill note + live link.
 
 Resolved markets get full analysis. Open markets get live odds + a link to bet
-on Polymarket (no resolved-analysis, no whale PnL — they haven't settled).
+on Polymarket (no resolved-analysis, no whale PnL; they have not settled).
 
 Outputs: /markets/<slug>/, /markets/category/<slug>/, /markets/ hub,
 sitemap.xml, robots.txt, llms.txt. Idempotent; safe to re-run.
@@ -49,7 +49,7 @@ def yes_price(m):
         return None
 
 def short_addr(a):
-    return f"{a[:6]}…{a[-4:]}" if a and len(a) > 12 else (a or "—")
+    return f"{a[:6]}…{a[-4:]}" if a and len(a) > 12 else (a or "-")
 
 def poly_url(m):
     es, s = m.get("event_slug"), m.get("slug")
@@ -92,7 +92,7 @@ def lede(m):
                 f"won and lost the most, with their entry, exit and profit.")
     return (f"{esc(m['question'])} is a live Polymarket market in the {esc(cat)} category, "
             f"open since {esc(opened)} with {esc(vol)} traded so far. It currently prices "
-            f"<strong>Yes at {pct}¢</strong>. This market has not resolved yet — follow or "
+            f"<strong>Yes at {pct}¢</strong>. This market has not resolved yet. Follow or "
             f"trade it live on Polymarket.")
 
 def faqs(m, whales):
@@ -115,7 +115,7 @@ def faqs(m, whales):
                 f"trading {l['traded']} across {l['trades']:,} trades."))
     else:
         out.append((f"Has \"{m['question']}\" resolved yet?",
-            f"No — it is still open. Yes currently trades at {pct}¢ "
+            f"No, it is still open. Yes currently trades at {pct}¢ "
             f"({fmt_money(m.get('volume'))} volume so far). Trade or follow it live on Polymarket."))
         out.append(("When does this market close?",
             f"Its scheduled end date is {date_of(m.get('end_date'))}. It opened {date_of(m.get('created_at'))}."))
@@ -184,13 +184,13 @@ def render_market(m, by_cat, whales_all):
     purl = poly_url(m)
 
     if resolved:
-        title = f"{m['question']} — Resolved {outcome} ({pct}¢) | {SITE_NAME}"
-        if len(title) > 66: title = f"{m['question'][:44]}… — {outcome} {pct}¢ | {SITE_NAME}"
+        title = f"{m['question']} | {outcome} at {pct}¢ | {SITE_NAME}"
+        if len(title) > 66: title = f"{m['question'][:46]}… | {outcome} {pct}¢ | {SITE_NAME}"
         desc = (f"{m['question']} resolved {outcome} at {pct}¢ on {closed} ({fmt_money(m.get('volume'))} "
                 f"volume). Real winning & losing wallets, entry/exit and PnL.")[:158]
     else:
-        title = f"{m['question']} — Live at {pct}¢ | {SITE_NAME}"
-        if len(title) > 66: title = f"{m['question'][:50]}… — {pct}¢ | {SITE_NAME}"
+        title = f"{m['question']} | Live at {pct}¢ | {SITE_NAME}"
+        if len(title) > 66: title = f"{m['question'][:52]}… | {pct}¢ | {SITE_NAME}"
         desc = (f"{m['question']} is open on Polymarket, Yes at {pct}¢ ({fmt_money(m.get('volume'))} "
                 f"volume). Live odds, open date and link to trade.")[:158]
 
@@ -271,9 +271,9 @@ def render_category(cat, ms):
     slug = slugify(cat); canonical = f"{BASE_URL}/markets/category/{slug}/"; rel = "../../../"
     total_vol = sum(x.get("volume") or 0 for x in ms)
     res = [x for x in ms if is_resolved(x)]; opn = [x for x in ms if not is_resolved(x)]
-    title = f"{cat} — {len(ms)} Polymarket Markets Analyzed | {SITE_NAME}"[:66]
+    title = f"{cat} | {len(ms)} Polymarket Markets Analyzed | {SITE_NAME}"[:66]
     desc = (f"All {len(ms)} {cat} Polymarket markets: {fmt_money(total_vol)} combined volume, "
-            f"{len(res)} resolved, {len(opn)} open — with real winners, losers and outcomes.")[:158]
+            f"{len(res)} resolved, {len(opn)} open, with real winners, losers and outcomes.")[:158]
     def row(x):
         st = "Resolved" if is_resolved(x) else "Open"
         return (f"<a class='mkt-row' href='{rel}markets/{x['slug']}/'><div><div class='q'>{esc(x['question'])}</div>"
@@ -299,16 +299,49 @@ def render_category(cat, ms):
         f.write(head(title, desc, canonical, jsonld, rel) + body)
 
 # ── Master hub (with embedded client-side search/filter) ────────────────────────
-def render_hub(markets, cats):
+def pnl_num(s):
+    try:
+        s = s.strip(); neg = s.startswith("-"); v = s.lstrip("+-$"); mult = 1
+        if v.endswith("B"): mult, v = 1e9, v[:-1]
+        elif v.endswith("M"): mult, v = 1e6, v[:-1]
+        elif v.endswith("K"): mult, v = 1e3, v[:-1]
+        n = float(v) * mult
+        return -n if neg else n
+    except Exception:
+        return 0
+
+def render_hub(markets, cats, whales_all):
     canonical = f"{BASE_URL}/markets/"; rel = "../"
     n_res = sum(1 for m in markets if is_resolved(m)); n_opn = len(markets) - n_res
-    title = f"All Polymarket Markets Analyzed — {len(markets)} Outcomes | {SITE_NAME}"[:68]
+    total_vol = sum(m.get("volume") or 0 for m in markets)
+    by_id = {m["id"]: m for m in markets}
+    title = f"All Polymarket Markets Analyzed | {len(markets)} Outcomes | {SITE_NAME}"[:68]
     desc = (f"Search {len(markets)} analyzed Polymarket markets ({n_res} resolved, {n_opn} open) "
-            f"across {len(cats)} categories. Real outcomes, winners, losers.")[:158]
-    # compact index for client-side search
+            f"across {len(cats)} categories. Real outcomes, real winning and losing wallets.")[:158]
+
+    # Biggest single-wallet wins across all markets (the hook)
+    wins = []
+    for mid, w in whales_all.items():
+        m = by_id.get(mid)
+        if m and w.get("winners"):
+            wins.append((pnl_num(w["winners"][0]["pnl"]), m, w["winners"][0]))
+    wins.sort(key=lambda x: -x[0])
+    feat_cards = "".join(
+        f"<a class='feat-card' href='{rel}markets/{m['slug']}/'>"
+        f"<div class='feat-pnl'>{esc(top['pnl'])}</div>"
+        f"<div class='feat-wallet'>{esc(short_addr(top['addr']))} · backed {esc(top['side'])}</div>"
+        f"<div class='feat-q'>{esc(m['question'])}</div>"
+        f"<div class='feat-meta'>{esc(fmt_money(m.get('volume')))} market volume</div></a>"
+        for _, m, top in wins[:6])
+
+    def teaser(m):
+        w = whales_all.get(m["id"])
+        return w["winners"][0]["pnl"] if (w and w.get("winners")) else ""
+
     idx = [{"q":m["question"],"s":m["slug"],"v":round((m.get("volume") or 0)),
             "c":cat_of(m),"r":1 if is_resolved(m) else 0,
-            "p":round((yes_price(m) or 0)*100),"d":date_of(m.get("end_date"))} for m in markets]
+            "p":round((yes_price(m) or 0)*100),"d":date_of(m.get("end_date")),
+            "w":teaser(m),"wn":pnl_num(teaser(m))} for m in markets]
     chips = "".join(f"<button class='chip' data-cat='{esc(c)}'>{esc(c)} ({len(ms)})</button>"
                     for c,ms in sorted(cats.items(), key=lambda kv:-len(kv[1]))[:40])
     jsonld = [{"@context":"https://schema.org","@type":"CollectionPage","name":"All Polymarket Markets Analyzed",
@@ -316,10 +349,20 @@ def render_hub(markets, cats):
     body = f"""{topbar(rel)}
 <main class="wrap">
 <div class="hub-hero"><h1>Polymarket Markets, Decoded</h1>
-<p>{len(markets)} markets analyzed across {len(cats)} categories — {n_res} resolved, {n_opn} open. Real outcomes, real winning and losing wallets.</p></div>
-<div class="hub-search"><input id="hubq" type="text" placeholder="Search {len(markets)} markets…" autocomplete="off">
+<p>Every resolved market, the real outcome, and the wallets that won and lost the most. {len(markets):,} markets analyzed from real on-chain data.</p>
+<div class="hub-stats">
+<div class="hs"><strong>{len(markets):,}</strong><span>Markets</span></div>
+<div class="hs"><strong>{n_res:,}</strong><span>Resolved</span></div>
+<div class="hs"><strong>{n_opn:,}</strong><span>Open</span></div>
+<div class="hs"><strong>{fmt_money(total_vol)}</strong><span>Total Volume</span></div>
+</div></div>
+
+{f'''<section class="feat-sec"><h2 class="feat-title">Biggest wallet wins</h2>
+<div class="feat-grid">{feat_cards}</div></section>''' if feat_cards else ''}
+
+<div class="hub-search"><input id="hubq" type="text" placeholder="Search {len(markets):,} markets by question, event or keyword…" autocomplete="off">
 <div class="hub-filters"><button class="fbtn active" data-st="all">All</button><button class="fbtn" data-st="1">Resolved</button><button class="fbtn" data-st="0">Open</button>
-<select id="hubsort"><option value="v">Sort: Volume</option><option value="d">Sort: Date</option></select></div></div>
+<select id="hubsort"><option value="w">Sort: Biggest win</option><option value="v">Sort: Volume</option><option value="d">Sort: Newest</option></select></div></div>
 <div class="chip-row" id="chips">{chips}</div>
 <p class="results-count" id="rc"></p>
 <div class="mkt-list" id="hublist"></div>
@@ -328,12 +371,12 @@ def render_hub(markets, cats):
 <script>
 const IDX={json.dumps(idx,separators=(",",":"))};
 const fm=n=>n>=1e9?'$'+(n/1e9).toFixed(2)+'B':n>=1e6?'$'+(n/1e6).toFixed(1)+'M':n>=1e3?'$'+(n/1e3).toFixed(0)+'K':'$'+n;
-let q='',st='all',cat='',sort='v',shown=60;
+let q='',st='all',cat='',sort='w',shown=60;
 const list=document.getElementById('hublist'),rc=document.getElementById('rc'),more=document.getElementById('hubmore');
 function filt(){{let r=IDX.filter(m=>(!q||m.q.toLowerCase().includes(q))&&(st==='all'||m.r==+st)&&(!cat||m.c===cat));
-r.sort((a,b)=>sort==='v'?b.v-a.v:(b.d>a.d?1:-1));return r;}}
+r.sort((a,b)=>sort==='v'?b.v-a.v:sort==='w'?b.wn-a.wn:(b.d>a.d?1:-1));return r;}}
 function render(){{const r=filt();rc.textContent='About '+r.length.toLocaleString()+' markets';
-list.innerHTML=r.slice(0,shown).map(m=>`<a class="mkt-row" href="../markets/${{m.s}}/"><div><div class="q">${{m.q.replace(/</g,'&lt;')}}</div><div class="meta">${{m.c}} · ${{m.r?'Resolved '+m.p+'¢':'Open '+m.p+'¢'}} · ${{m.d}}</div></div><div class="vol">${{fm(m.v)}}</div></a>`).join('');
+list.innerHTML=r.slice(0,shown).map(m=>`<a class="mkt-row" href="../markets/${{m.s}}/"><div class="mkt-l"><div class="q">${{m.q.replace(/</g,'&lt;')}}</div><div class="meta">${{m.c}} · ${{m.r?'Resolved '+m.p+'¢':'Open '+m.p+'¢'}} · ${{m.d}}</div></div><div class="mkt-r"><div class="vol">${{fm(m.v)}}</div>${{m.w?`<div class="teaser">Top wallet ${{m.w}}</div>`:''}}</div></a>`).join('');
 more.style.display=r.length>shown?'block':'none';}}
 document.getElementById('hubq').addEventListener('input',e=>{{q=e.target.value.toLowerCase();shown=60;render();}});
 document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',()=>{{document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');st=b.dataset.st;shown=60;render();}}));
@@ -362,7 +405,7 @@ def write_seo_files(markets, cats):
         f"Sitemap: {BASE_URL}/sitemap.xml\n")
     top = sorted(cats.items(), key=lambda kv:-len(kv[1]))[:25]
     open(os.path.join(ROOT,"llms.txt"),"w").write(
-        f"# {SITE_NAME} — {TAGLINE}\n\n> {SITE_NAME} analyzes {len(markets)} Polymarket markets with real "
+        f"# {SITE_NAME}: {TAGLINE}\n\n> {SITE_NAME} analyzes {len(markets)} Polymarket markets with real "
         f"outcomes and real wallet-level winners/losers computed from on-chain trade data.\n\n## Key Pages\n\n"
         f"- [All Markets]({BASE_URL}/markets/): searchable index of every market.\n"
         f"- [Terminal]({BASE_URL}/): interactive search terminal.\n\n## Categories\n\n" +
@@ -396,7 +439,7 @@ def main():
         if (i+1)%500==0: print(f"  …{i+1}/{len(markets)} pages", flush=True)
     if end>=len(markets):
         for c,ms in cats.items(): render_category(c,ms)
-        render_hub(markets,cats); write_seo_files(markets,cats)
+        render_hub(markets,cats,whales_all); write_seo_files(markets,cats)
         wn = len(whales_all)
         print(f"✓ {len(cats)} categories + hub + sitemap/robots/llms; real whales on {wn} markets")
     print(f"✓ pages [{start}:{min(end,len(markets))}] of {len(markets)}")

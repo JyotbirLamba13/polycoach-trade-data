@@ -1,4 +1,4 @@
-# PolyAlpha — Polymarket Trade Intelligence
+# PolyAlpha: Polymarket Trade Intelligence
 
 > PolyAlpha analyzes 3000 Polymarket markets with real outcomes and real wallet-level winners/losers computed from on-chain trade data.
 

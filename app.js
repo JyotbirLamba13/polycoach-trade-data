@@ -320,9 +320,9 @@ function renderMarketSummary(market) {
 
     const cells = [
         ['VOLUME', market.v],
-        ['TRADES', w ? w.trades.toLocaleString() : '—'],
-        ['HIGH', w ? `${w.hi}¢` : '—'],
-        ['LOW', w ? `${w.lo}¢` : '—'],
+        ['TRADES', w ? w.trades.toLocaleString() : '-'],
+        ['HIGH', w ? `${w.hi}¢` : '-'],
+        ['LOW', w ? `${w.lo}¢` : '-'],
         ['OUTCOME', outcome],
     ];
     const verb = resolved ? 'resolved' : 'is currently trading at';
@@ -389,24 +389,24 @@ function generateTradeData(market) {
     function makeTrade(tag, entryFrac, exitFrac, type, pnlMin, pnlMax, investedMin, investedMax, reason) {
         const pnl = (pnlMin + Math.floor(rng() * (pnlMax - pnlMin))) * scale;
         const invested = (investedMin + Math.floor(rng() * (investedMax - investedMin))) * scale;
-        // entryTime / exitTime as fractions of chart range — resolved in updateTerminalPanels
+        // entryTime / exitTime as fractions of chart range, resolved in updateTerminalPanels
         return { addr: makeWallet(tag), entryFrac, exitFrac, pnl: type === 'winner' ? pnl : -pnl, invested, type, reason };
     }
 
     const winners = [
         makeTrade('w_alpha', 0.02, 0.98, 'winner', 140000, 280000, 260000, 480000,
-            "Entered during maximum uncertainty — market pricing only ~15% chance. Spotted early institutional accumulation and held through two major volatility spikes. Classic conviction play with near-perfect entry timing."),
+            "Entered during maximum uncertainty, market pricing only ~15% chance. Spotted early institutional accumulation and held through two major volatility spikes. Classic conviction play with near-perfect entry timing."),
         makeTrade('w_beta',  0.20, 0.97, 'winner',  60000, 140000, 130000, 280000,
             "Accumulated across three entries during the mid-market correction while weak hands were exiting. Identified a narrative compression pattern that typically precedes a breakout. Reduced slippage with staged sizing."),
         makeTrade('w_gamma', 0.44, 0.96, 'winner',  18000,  55000,  45000, 110000,
-            "Late momentum trade after primary resistance broke with volume confirmation. Lower risk, lower reward — textbook trend-following execution into final settlement. No overnight exposure risk."),
+            "Late momentum trade after primary resistance broke with volume confirmation. Lower risk, lower reward, textbook trend-following execution into final settlement. No overnight exposure risk."),
     ];
 
     const losers = [
         makeTrade('l_alpha', 0.54, 0.99, 'loser',  90000, 200000, 180000, 380000,
-            "Bet NO at peak crowd overconfidence. Entered counter-trend expecting a reversion that never materialized. Held to full resolution with no stop-loss — lost nearly the entire stake as market settled YES."),
+            "Bet NO at peak crowd overconfidence. Entered counter-trend expecting a reversion that never materialized. Held to full resolution with no stop-loss, lost nearly the entire stake as market settled YES."),
         makeTrade('l_beta',  0.32, 0.67, 'loser',  35000,  90000,  80000, 180000,
-            "Bought YES mid-range but panic-sold into a temporary dip, locking in a 40% loss. Market rebounded sharply within hours of exit. Correct thesis, catastrophically poor execution — a textbook weak-hand event."),
+            "Bought YES mid-range but panic-sold into a temporary dip, locking in a 40% loss. Market rebounded sharply within hours of exit. Correct thesis, catastrophically poor execution, a textbook weak-hand event."),
         makeTrade('l_gamma', 0.72, 0.99, 'loser',  12000,  38000,  30000,  80000,
             "Late contrarian bet on NO, attempting to scalp a pullback with market already at 85%+ implied probability. Entered with no statistical edge and was wiped at settlement. No position sizing discipline."),
     ];
