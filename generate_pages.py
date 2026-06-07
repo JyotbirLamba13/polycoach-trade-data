@@ -364,6 +364,7 @@ def render_hub(markets, cats, whales_all):
 <div class="hub-filters"><button class="fbtn active" data-st="all">All</button><button class="fbtn" data-st="1">Resolved</button><button class="fbtn" data-st="0">Open</button>
 <select id="hubsort"><option value="w">Sort: Biggest win</option><option value="v">Sort: Volume</option><option value="d">Sort: Newest</option></select></div></div>
 <div class="chip-row" id="chips">{chips}</div>
+<div class="active-filter" id="afilter" style="display:none"></div>
 <p class="results-count" id="rc"></p>
 <div class="mkt-list" id="hublist"></div>
 <button id="hubmore" class="more-btn">Show more</button>
@@ -372,10 +373,13 @@ def render_hub(markets, cats, whales_all):
 const IDX={json.dumps(idx,separators=(",",":"))};
 const fm=n=>n>=1e9?'$'+(n/1e9).toFixed(2)+'B':n>=1e6?'$'+(n/1e6).toFixed(1)+'M':n>=1e3?'$'+(n/1e3).toFixed(0)+'K':'$'+n;
 let q='',st='all',cat='',sort='w',shown=60;
-const list=document.getElementById('hublist'),rc=document.getElementById('rc'),more=document.getElementById('hubmore');
+const list=document.getElementById('hublist'),rc=document.getElementById('rc'),more=document.getElementById('hubmore'),af=document.getElementById('afilter'),chipsEl=document.getElementById('chips');
 function filt(){{let r=IDX.filter(m=>(!q||m.q.toLowerCase().includes(q))&&(st==='all'||m.r==+st)&&(!cat||m.c===cat));
 r.sort((a,b)=>sort==='v'?b.v-a.v:sort==='w'?b.wn-a.wn:(b.d>a.d?1:-1));return r;}}
-function render(){{const r=filt();rc.textContent='About '+r.length.toLocaleString()+' markets';
+function updateBar(){{const parts=[];if(cat)parts.push('Theme: <b>'+cat+'</b>');if(st!=='all')parts.push('Status: <b>'+(st==='1'?'Resolved':'Open')+'</b>');if(q)parts.push('Search: <b>'+q.replace(/</g,'&lt;')+'</b>');
+if(parts.length){{af.style.display='flex';af.innerHTML='<span class="af-txt">Showing '+parts.join(' &nbsp;·&nbsp; ')+'</span><button id="clrall" class="clr-btn">Clear all ✕</button>';document.getElementById('clrall').onclick=clearAll;chipsEl.style.display=cat?'none':'flex';}}else{{af.style.display='none';chipsEl.style.display='flex';}}}}
+function clearAll(){{q='';st='all';cat='';sort='w';shown=60;document.getElementById('hubq').value='';document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('active',x.dataset.st==='all'));document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));document.getElementById('hubsort').value='w';render();}}
+function render(){{const r=filt();rc.textContent='About '+r.length.toLocaleString()+' markets';updateBar();
 list.innerHTML=r.slice(0,shown).map(m=>`<a class="mkt-row" href="../markets/${{m.s}}/"><div class="mkt-l"><div class="q">${{m.q.replace(/</g,'&lt;')}}</div><div class="meta">${{m.c}} · ${{m.r?'Resolved '+m.p+'¢':'Open '+m.p+'¢'}} · ${{m.d}}</div></div><div class="mkt-r"><div class="vol">${{fm(m.v)}}</div>${{m.w?`<div class="teaser">Top wallet ${{m.w}}</div>`:''}}</div></a>`).join('');
 more.style.display=r.length>shown?'block':'none';}}
 document.getElementById('hubq').addEventListener('input',e=>{{q=e.target.value.toLowerCase();shown=60;render();}});
