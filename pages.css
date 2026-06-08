@@ -163,4 +163,17 @@ section p{color:#c0c5cf;font-size:15px}
   .rel-grid{grid-template-columns:1fr}
   .page-h1{font-size:26px}
   .topnav{display:none}
+  .wrap{padding:0 16px}
+  /* wide tables scroll horizontally instead of overflowing */
+  .tbl{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+  .hub-hero h1{font-size:30px}
+  .hub-hero p{font-size:15px}
+  .hub-stats{gap:8px}
+  .hub-stats .hs{flex:1 1 calc(50% - 8px);min-width:0;padding:12px 14px}
+  .hub-stats .hs strong{font-size:20px}
+  .feat-grid{grid-template-columns:1fr}
+  .hub-filters{flex-wrap:wrap}
+  #hubsort{margin-left:0}
+  .mkt-row{padding:12px 14px}
+  .mkt-row .q{font-size:14px}
 }

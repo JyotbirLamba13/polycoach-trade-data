@@ -642,3 +642,52 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── MOBILE / RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  /* Hero */
+  .search-container { padding: 0 18px; }
+  .hero-headline { font-size: 30px; }
+  .hero-sub { font-size: 13px; }
+  .hero-eyebrow { font-size: 9px; padding: 6px 12px; }
+  .brand.large h1 { font-size: 42px; }
+  /* Hero stats: shrink so all three fit one row */
+  .hero-stats { padding: 12px 0; width: 100%; }
+  .h-stat { padding: 0 10px; flex: 1; min-width: 0; }
+  .h-stat strong { font-size: 18px; }
+  .h-stat span { font-size: 8px; letter-spacing: 0.04em; }
+  .h-stat-div { height: 28px; }
+  .quick-links { gap: 6px; }
+  .pill { padding: 6px 12px; font-size: 11px; }
+
+  /* Landing sections */
+  .lp-section { padding: 48px 20px; }
+  .lp-lead { font-size: 16px; }
+
+  /* TERMINAL: stack, drop the sidebar */
+  .terminal-layout { grid-template-columns: 1fr; }
+  .sidebar-recent { display: none; }
+  .pro-nav { padding: 0 12px; gap: 8px; }
+  .nav-left { gap: 8px; flex: 1; min-width: 0; }
+  .brand-small strong { display: none; }
+  .pro-search-box { width: auto; flex: 1; min-width: 0; }
+  .terminal-suggest { width: 88vw !important; }
+  .nav-right .data-pulse, .nav-right .repo-badge { display: none; }
+  .nav-link { font-size: 12px; }
+
+  .main-terminal { padding: 14px; gap: 16px; }
+  .market-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .market-header h2 { font-size: 18px; }
+  .category-tag { font-size: 9px; }
+  .header-right { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+  .full-report-link { margin-right: 0; }
+
+  .market-summary { padding: 14px; }
+  .summary-cells { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  .chart-container-pro { height: 280px; min-height: 280px; }
+
+  /* Bottom data grid stacks */
+  .bottom-data-grid { grid-template-columns: 1fr; }
+  .card-body { grid-template-columns: repeat(2, 1fr); }
+}
