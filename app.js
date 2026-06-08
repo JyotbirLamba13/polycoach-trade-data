@@ -470,134 +470,88 @@ function renderDarkChart(market, interval = 3600) {
     }).observe(container);
 
     document.querySelector("#chart-loading").style.display = "none";
-    updateTerminalPanels(market, currentChartData);
+    updateTerminalPanels(market);
 }
 
 // ─── Panels ───────────────────────────────────────────────────────────────────
 
-function updateTerminalPanels(market, chartData) {
-    const { winners, losers } = generateTradeData(market);
-    const startTime = chartData[0].time;
-    const endTime = chartData[chartData.length - 1].time;
-    const range = endTime - startTime;
+function updateTerminalPanels(market) {
+    const w = whalesById[market.id];
+    const winners = (w && w.winners) || [];
+    const losers  = (w && w.losers)  || [];
 
-    function resolveIndices(trade) {
-        const entryTime = startTime + Math.floor(trade.entryFrac * range);
-        const exitTime  = startTime + Math.floor(trade.exitFrac  * range);
-        return { entryIdx: nearestIdx(chartData, entryTime), exitIdx: nearestIdx(chartData, exitTime), entryTime, exitTime };
-    }
-
-    function buildCard(trade, cssClass) {
-        const { entryIdx, exitIdx, entryTime, exitTime } = resolveIndices(trade);
-        const entryPct  = Math.round(chartData[entryIdx].close * 100);
-        const exitPct   = Math.round(chartData[exitIdx].close  * 100);
-        const returnPct = Math.round((trade.pnl / trade.invested) * 100);
-        const duration  = fmtDuration(exitTime - entryTime);
-        const pnlStr    = trade.pnl >= 0 ? `+${fmtMoney(trade.pnl)}` : `-${fmtMoney(Math.abs(trade.pnl))}`;
-        const pnlCls    = trade.pnl >= 0 ? 'card-pnl pnl' : 'card-pnl pnl loss';
-        const retCls    = trade.pnl >= 0 ? 'cs-val green' : 'cs-val red';
-        const retStr    = (returnPct >= 0 ? '+' : '') + returnPct + '%';
-        const polyUrl   = `https://polymarket.com/profile/${trade.addr}`;
+    function card(t, cls) {
+        const pnlCls = String(t.pnl).startsWith('-') ? 'card-pnl pnl loss' : 'card-pnl pnl';
+        const polyUrl = `https://polymarket.com/profile/${t.addr}`;
         return `
-            <div class="${cssClass} clickable">
+            <div class="${cls} clickable" data-addr="${t.addr}" data-side="${t.side}" data-traded="${t.traded}" data-pnl="${t.pnl}" data-trades="${t.trades}" data-held="${t.held}">
                 <div class="card-top">
-                    <a class="wallet-link" href="${polyUrl}" target="_blank" rel="noopener"
-                       onclick="event.stopPropagation()">${shortAddr(trade.addr)} ↗</a>
-                    <span class="${pnlCls}">${pnlStr}</span>
+                    <a class="wallet-link" href="${polyUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${shortAddr(t.addr)} \u2197</a>
+                    <span class="${pnlCls}">${t.pnl}</span>
                 </div>
                 <div class="card-body">
-                    <div class="cs"><span class="cs-lbl">ENTRY</span><span class="cs-val">${entryPct}¢</span></div>
-                    <div class="cs"><span class="cs-lbl">EXIT</span><span class="cs-val">${exitPct}¢</span></div>
-                    <div class="cs"><span class="cs-lbl">RETURN</span><span class="${retCls}">${retStr}</span></div>
-                    <div class="cs"><span class="cs-lbl">HELD</span><span class="cs-val">${duration}</span></div>
-                    <div class="cs cs-invested">
-                        <span class="cs-lbl">INVESTED</span>
-                        <span class="cs-val">${fmtMoney(trade.invested)}</span>
-                    </div>
+                    <div class="cs"><span class="cs-lbl">SIDE</span><span class="cs-val">${t.side}</span></div>
+                    <div class="cs"><span class="cs-lbl">TRADED</span><span class="cs-val">${t.traded}</span></div>
+                    <div class="cs"><span class="cs-lbl">TRADES</span><span class="cs-val">${(+t.trades).toLocaleString()}</span></div>
+                    <div class="cs"><span class="cs-lbl">HELD</span><span class="cs-val">${t.held}</span></div>
                 </div>
             </div>`;
     }
 
-    document.querySelector("#whale-feed").innerHTML  = winners.map(w => buildCard(w, 'winner-card')).join("");
-    document.querySelector("#loser-feed").innerHTML  = losers.map(l  => buildCard(l,  'loser-card')).join("");
+    const wf = document.querySelector("#whale-feed");
+    const lf = document.querySelector("#loser-feed");
 
-    document.querySelector("#analysis-text").textContent = "Click any trade to see entry/exit on chart and full analysis.";
-    document.querySelector("#stat-entry").textContent   = "--";
-    document.querySelector("#stat-outcome").textContent = "--";
-    document.querySelector("#stat-detail").textContent  = "--";
-
-    document.querySelectorAll(".winner-card").forEach((card, i) => {
-        card.addEventListener("click", () => selectTrade('winner', i, winners, losers, chartData));
-    });
-    document.querySelectorAll(".loser-card").forEach((card, i) => {
-        card.addEventListener("click", () => selectTrade('loser', i, winners, losers, chartData));
-    });
-
-    // Restore selection after timeframe switch
-    if (selectedTrade) {
-        const cards = selectedTrade.type === 'winner'
-            ? document.querySelectorAll(".winner-card")
-            : document.querySelectorAll(".loser-card");
-        if (cards[selectedTrade.idx]) cards[selectedTrade.idx].classList.add("active-trade");
-        applyTradeToChart(selectedTrade.type, selectedTrade.idx, winners, losers, chartData);
+    if (winners.length || losers.length) {
+        wf.innerHTML = winners.map(t => card(t, 'winner-card')).join("");
+        lf.innerHTML = losers.map(t => card(t, 'loser-card')).join("");
+        fillDiagnosisDefault(market, w);
+        document.querySelectorAll(".winner-card, .loser-card").forEach(c => {
+            c.addEventListener("click", () => {
+                clearActiveCards();
+                c.classList.add("active-trade");
+                fillDiagnosisFromCard(c.dataset);
+            });
+        });
+    } else {
+        wf.innerHTML = `<div class="empty-note">Wallet-level winners and losers for this market are being backfilled from on-chain data.</div>`;
+        lf.innerHTML = "";
+        document.querySelector("#analysis-text").textContent =
+            "Real wallet-level data for this market is being backfilled. The outcome, volume and dates above are final.";
+        document.querySelector("#stat-entry").textContent = "--";
+        document.querySelector("#stat-outcome").textContent = "--";
+        document.querySelector("#stat-detail").textContent = "--";
     }
 }
 
-function selectTrade(type, idx, winners, losers, chartData) {
-    selectedTrade = { type, idx };
-    clearActiveCards();
-    const cards = type === 'winner'
-        ? document.querySelectorAll(".winner-card")
-        : document.querySelectorAll(".loser-card");
-    if (cards[idx]) cards[idx].classList.add("active-trade");
-    applyTradeToChart(type, idx, winners, losers, chartData);
+// Default diagnosis shown on load (no trade click required) using real whale data
+function fillDiagnosisDefault(market, w) {
+    const m = market._real || {};
+    const yes = realYes(m);
+    const pct = yes == null ? null : Math.round(yes * 100);
+    const resolved = m.closed === 1;
+    const top = w.winners && w.winners[0];
+    const worst = w.losers && w.losers[0];
+    const outcomeTxt = resolved
+        ? `resolved ${yes >= 0.5 ? 'YES' : 'NO'} at ${pct}\u00a2`
+        : `is trading at ${pct}\u00a2`;
+    let txt = `${market.q} ${outcomeTxt}.`;
+    if (top) txt += ` The most profitable wallet took the ${top.side} side for a realized ${top.pnl}`;
+    if (worst) txt += `, while the biggest loss was ${worst.pnl} on the ${worst.side} side`;
+    txt += `. Tap any wallet below to inspect it.`;
+    document.querySelector("#analysis-text").textContent = txt;
+    if (top) {
+        document.querySelector("#stat-entry").textContent   = top.side;
+        document.querySelector("#stat-outcome").textContent = top.pnl;
+        document.querySelector("#stat-detail").textContent  = `${top.traded} \u00b7 ${(+top.trades).toLocaleString()} trades \u00b7 ${top.held}`;
+    }
 }
 
-function applyTradeToChart(type, idx, winners, losers, chartData) {
-    const trade = (type === 'winner' ? winners : losers)[idx];
-    if (!trade) return;
-
-    const startTime = chartData[0].time;
-    const endTime   = chartData[chartData.length - 1].time;
-    const range = endTime - startTime;
-    const entryTime = startTime + Math.floor(trade.entryFrac * range);
-    const exitTime  = startTime + Math.floor(trade.exitFrac  * range);
-    const entryIdx  = nearestIdx(chartData, entryTime);
-    const exitIdx   = nearestIdx(chartData, exitTime);
-
-    clearPriceLines();
-
-    const entryPrice = chartData[entryIdx].close;
-    const exitPrice  = chartData[exitIdx].close;
-    const isWinner = trade.pnl >= 0;
-
-    activePriceLines.push(candleSeries.createPriceLine({
-        price: entryPrice, color: "#2962ff",
-        lineWidth: 2, lineStyle: 2,
-        axisLabelVisible: true, title: "ENTRY",
-    }));
-    activePriceLines.push(candleSeries.createPriceLine({
-        price: exitPrice, color: isWinner ? "#00c076" : "#ff3b30",
-        lineWidth: 2, lineStyle: 2,
-        axisLabelVisible: true, title: isWinner ? "EXIT ✓" : "EXIT ✗",
-    }));
-
-    chart.timeScale().setVisibleRange({
-        from: chartData[Math.max(0, entryIdx - 8)].time,
-        to:   chartData[Math.min(chartData.length - 1, exitIdx + 8)].time,
-    });
-
-    const entryPct  = Math.round(entryPrice * 100);
-    const exitPct   = Math.round(exitPrice  * 100);
-    const returnPct = Math.round((trade.pnl / trade.invested) * 100);
-    const pnlStr    = isWinner ? `+${fmtMoney(trade.pnl)}` : `-${fmtMoney(Math.abs(trade.pnl))}`;
-    const retStr    = (returnPct >= 0 ? '+' : '') + returnPct + '%';
-    const duration  = fmtDuration(exitTime - entryTime);
-
-    document.querySelector("#analysis-text").textContent = trade.reason;
-    document.querySelector("#stat-entry").textContent    = `${entryPct}¢`;
-    document.querySelector("#stat-outcome").textContent  = `${exitPct}¢  ·  ${pnlStr}  (${retStr})`;
-    document.querySelector("#stat-detail").textContent   = `${fmtMoney(trade.invested)}  ·  ${duration}`;
+function fillDiagnosisFromCard(d) {
+    document.querySelector("#analysis-text").textContent =
+        `Wallet ${shortAddr(d.addr)} took the ${d.side} side on this market, trading ${d.traded} across ${(+d.trades).toLocaleString()} trades over ${d.held}, for a realized ${d.pnl}.`;
+    document.querySelector("#stat-entry").textContent   = d.side;
+    document.querySelector("#stat-outcome").textContent = d.pnl;
+    document.querySelector("#stat-detail").textContent  = `${d.traded} \u00b7 ${(+d.trades).toLocaleString()} \u00b7 ${d.held}`;
 }
 
 function clearPriceLines() {
