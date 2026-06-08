@@ -48,7 +48,7 @@ def main():
     con.execute(f"CREATE TEMP TABLE yp(market_id VARCHAR, yes DOUBLE);")
     con.execute(f"INSERT INTO yp VALUES {vals};")
 
-    idlist = ",".join(f"'{mid}'" for mid in ids)
+    # filter via the yp temp table (semi-join) -- avoids a huge IN-list string
     t0 = time.time()
     # Read filtered trades once; split each trade into its maker & taker as per-user rows.
     # direction is 'BUY'/'SELL'; buy = acquiring the (YES-unified) token.
@@ -56,7 +56,7 @@ def main():
     WITH base AS (
       SELECT market_id, maker, taker, maker_direction AS md, taker_direction AS td,
              usd_amount, token_amount, timestamp
-      FROM read_parquet('{T}') WHERE market_id IN ({idlist})
+      FROM read_parquet('{T}') WHERE market_id IN (SELECT market_id FROM yp)
     ),
     u AS (
       SELECT market_id, maker AS address, md AS dir, usd_amount, token_amount, timestamp FROM base
@@ -89,7 +89,7 @@ def main():
     print(f"  query returned {len(rows)} rows in {time.time()-t0:.0f}s", flush=True)
     # per-market summary stats: total trades + real price high/low (for the summary panel)
     stats = con.execute(f"""SELECT market_id, count(*), min(price), max(price)
-        FROM read_parquet('{T}') WHERE market_id IN ({idlist}) GROUP BY market_id""").fetchall()
+        FROM read_parquet('{T}') WHERE market_id IN (SELECT market_id FROM yp) GROUP BY market_id""").fetchall()
     tc = {r[0]: {"trades": int(r[1]), "lo": r[2], "hi": r[3]} for r in stats}
 
     def ts_days(a, b):

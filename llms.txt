@@ -1,6 +1,6 @@
 # PolyAlpha: Polymarket Trade Intelligence
 
-> PolyAlpha analyzes 3000 Polymarket markets with real outcomes and real wallet-level winners/losers computed from on-chain trade data.
+> PolyAlpha analyzes 13500 Polymarket markets with real outcomes and real wallet-level winners/losers computed from on-chain trade data.
 
 ## Key Pages
 
@@ -9,31 +9,31 @@
 
 ## Categories
 
+- [US next strikes Iran on...?](https://polycoach-trade-data.pages.dev/markets/category/us-next-strikes-iran-on/): 77 markets.
+- [The Masters 2026: Winner ](https://polycoach-trade-data.pages.dev/markets/category/the-masters-2026-winner/): 76 markets.
+- [US strikes Iran by...?](https://polycoach-trade-data.pages.dev/markets/category/us-strikes-iran-by/): 60 markets.
 - [2026 FIFA World Cup Winner ](https://polycoach-trade-data.pages.dev/markets/category/2026-fifa-world-cup-winner/): 49 markets.
-- [US strikes Iran by...?](https://polycoach-trade-data.pages.dev/markets/category/us-strikes-iran-by/): 47 markets.
+- [2025 National Heads-Up Poker Championship Winner](https://polycoach-trade-data.pages.dev/markets/category/2025-national-heads-up-poker-championship-winner/): 46 markets.
 - [Democratic Presidential Nominee 2028](https://polycoach-trade-data.pages.dev/markets/category/democratic-presidential-nominee-2028/): 44 markets.
+- [# of views of next MrBeast video on day 1?](https://polycoach-trade-data.pages.dev/markets/category/of-views-of-next-mrbeast-video-on-day-1/): 44 markets.
+- [Elon Musk # tweets January 20 - January 27, 2026?](https://polycoach-trade-data.pages.dev/markets/category/elon-musk-tweets-january-20---january-27-2026/): 38 markets.
+- [Eurovision Winner 2025](https://polycoach-trade-data.pages.dev/markets/category/eurovision-winner-2025/): 37 markets.
+- [Champions League Winner](https://polycoach-trade-data.pages.dev/markets/category/champions-league-winner/): 36 markets.
 - [Presidential Election Winner 2028](https://polycoach-trade-data.pages.dev/markets/category/presidential-election-winner-2028/): 36 markets.
+- [What price will Bitcoin hit in February?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-february/): 36 markets.
+- [Next French Presidential Election](https://polycoach-trade-data.pages.dev/markets/category/next-french-presidential-election/): 36 markets.
 - [Republican Presidential Nominee 2028](https://polycoach-trade-data.pages.dev/markets/category/republican-presidential-nominee-2028/): 35 markets.
-- [Champions League Winner](https://polycoach-trade-data.pages.dev/markets/category/champions-league-winner/): 33 markets.
-- [Big Game Champion 2026](https://polycoach-trade-data.pages.dev/markets/category/big-game-champion-2026/): 32 markets.
+- [NBA Scoring Leader](https://polycoach-trade-data.pages.dev/markets/category/nba-scoring-leader/): 35 markets.
+- [What price will Bitcoin hit in April?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-april/): 35 markets.
+- [Eurovision Winner 2026](https://polycoach-trade-data.pages.dev/markets/category/eurovision-winner-2026/): 35 markets.
+- [NBA Champion](https://polycoach-trade-data.pages.dev/markets/category/nba-champion/): 33 markets.
+- [What price will Bitcoin hit in January?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-january/): 33 markets.
+- [What price will Bitcoin hit in November?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-november/): 33 markets.
 - [Super Bowl Champion 2025](https://polycoach-trade-data.pages.dev/markets/category/super-bowl-champion-2025/): 32 markets.
-- [NBA Champion](https://polycoach-trade-data.pages.dev/markets/category/nba-champion/): 30 markets.
-- [Who will Trump nominate as Fed Chair?](https://polycoach-trade-data.pages.dev/markets/category/who-will-trump-nominate-as-fed-chair/): 25 markets.
-- [What price will Bitcoin hit in February?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-february/): 23 markets.
-- [UEFA Champions League Winner ](https://polycoach-trade-data.pages.dev/markets/category/uefa-champions-league-winner/): 23 markets.
-- [Eurovision Winner 2026](https://polycoach-trade-data.pages.dev/markets/category/eurovision-winner-2026/): 23 markets.
-- [2026 NBA Champion](https://polycoach-trade-data.pages.dev/markets/category/2026-nba-champion/): 22 markets.
-- [Republican VP nominee?](https://polycoach-trade-data.pages.dev/markets/category/republican-vp-nominee/): 21 markets.
-- [NFL MVP](https://polycoach-trade-data.pages.dev/markets/category/nfl-mvp/): 20 markets.
-- [Premier League Winner](https://polycoach-trade-data.pages.dev/markets/category/premier-league-winner/): 20 markets.
-- [Portugal Presidential Election](https://polycoach-trade-data.pages.dev/markets/category/portugal-presidential-election/): 19 markets.
-- [Eurovision Winner 2025](https://polycoach-trade-data.pages.dev/markets/category/eurovision-winner-2025/): 19 markets.
-- [F1 Drivers Champion](https://polycoach-trade-data.pages.dev/markets/category/f1-drivers-champion/): 18 markets.
-- [What price will Bitcoin hit in January?](https://polycoach-trade-data.pages.dev/markets/category/what-price-will-bitcoin-hit-in-january/): 18 markets.
-- [2025 National Heads-Up Poker Championship Winner](https://polycoach-trade-data.pages.dev/markets/category/2025-national-heads-up-poker-championship-winner/): 18 markets.
-- [F1 Drivers' Champion](https://polycoach-trade-data.pages.dev/markets/category/f1-drivers-champion/): 18 markets.
-- [Romania: Bucharest Mayoral Election](https://polycoach-trade-data.pages.dev/markets/category/romania-bucharest-mayoral-election/): 17 markets.
-- [Presidential Election Winner 2024](https://polycoach-trade-data.pages.dev/markets/category/presidential-election-winner-2024/): 17 markets.
+- [Big Game Champion 2026](https://polycoach-trade-data.pages.dev/markets/category/big-game-champion-2026/): 32 markets.
+- [Stanley Cup Champion 2025](https://polycoach-trade-data.pages.dev/markets/category/stanley-cup-champion-2025/): 32 markets.
+- [Next Country US Strikes](https://polycoach-trade-data.pages.dev/markets/category/next-country-us-strikes/): 31 markets.
+- [2026 NHL Stanley Cup Champion ](https://polycoach-trade-data.pages.dev/markets/category/2026-nhl-stanley-cup-champion/): 30 markets.
 
 ## About
 

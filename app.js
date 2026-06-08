@@ -149,9 +149,17 @@ function realYes(m) {
     catch (e) { return null; }
 }
 
+let whalesLoaded = false;
+async function ensureWhales() {
+    if (whalesLoaded) return;
+    try { whalesById = await (await fetch('whales_real.json')).json(); }
+    catch (e) { whalesById = {}; }
+    whalesLoaded = true;
+}
+
 async function init() {
     try {
-        const r = await fetch('markets_real.json');
+        const r = await fetch('app_markets.json');
         const raw = await r.json();
         realById = {};
         searchIndex = raw.map(m => {
@@ -161,11 +169,7 @@ async function init() {
                 d: (m.end_date || '').slice(0, 10), v: fmtVol(m.volume), _real: m,
             };
         });
-    } catch (e) { console.error("Failed to load markets_real.json", e); }
-
-    try {
-        whalesById = await (await fetch('whales_real.json')).json();
-    } catch (e) { whalesById = {}; }
+    } catch (e) { console.error("Failed to load app_markets.json", e); }
 
     initHeroCanvas();
 
@@ -269,13 +273,15 @@ function updateSelection(items) {
 
 // ─── Market load ─────────────────────────────────────────────────────────────
 
-function loadMarketTerminal(id) {
+async function loadMarketTerminal(id) {
     const market = searchIndex.find(m => m.id === id);
     if (!market) return;
 
     currentMarket = market;
     currentInterval = 3600;
     selectedTrade = null; // reset on new market
+
+    await ensureWhales();  // lazy-load real whale data on first market open
 
     document.querySelectorAll(".t-btn").forEach(b => b.classList.remove("active"));
     document.querySelectorAll(".t-btn")[0].classList.add("active");
