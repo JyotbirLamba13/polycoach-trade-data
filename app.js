@@ -66,39 +66,44 @@ function initHeroCanvas() {
     resize();
     window.addEventListener('resize', resize);
 
-    const particles = Array.from({ length: 55 }, () => ({
+    const particles = Array.from({ length: 70 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.35,
         vy: (Math.random() - 0.5) * 0.35,
-        r: 1 + Math.random() * 1.2,
+        r: 1.3 + Math.random() * 1.7,
     }));
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p, i) => {
-            p.x += p.vx; p.y += p.vy;
-            if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-            ctx.fillStyle = 'rgba(41,98,255,0.45)';
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fill();
-
+        // connecting lines first (brighter), then glowing dots on top
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
             for (let j = i + 1; j < particles.length; j++) {
                 const q = particles[j];
                 const d = Math.hypot(p.x - q.x, p.y - q.y);
-                if (d < 140) {
-                    ctx.strokeStyle = `rgba(41,98,255,${0.13 * (1 - d / 140)})`;
-                    ctx.lineWidth = 0.6;
+                if (d < 150) {
+                    ctx.strokeStyle = `rgba(90,150,255,${0.30 * (1 - d / 150)})`;
+                    ctx.lineWidth = 0.8;
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(q.x, q.y);
                     ctx.stroke();
                 }
             }
+        }
+        ctx.shadowColor = 'rgba(90,150,255,0.9)';
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = 'rgba(120,170,255,0.9)';
+        particles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
         });
+        ctx.shadowBlur = 0;
         requestAnimationFrame(draw);
     }
     draw();

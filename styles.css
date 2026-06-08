@@ -37,7 +37,8 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #0b0e11;
+  /* slightly lifted, with a soft radial glow in the center for depth */
+  background: radial-gradient(circle at 50% 32%, #1a2029 0%, #12161d 55%, #0e1218 100%);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -74,7 +75,7 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
 @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(5px)} }
 
 /* Landing sections (below the fold) */
-.landing-sections { position: relative; z-index: 10; background: #0b0e11; border-top: 1px solid var(--panel-border); }
+.landing-sections { position: relative; z-index: 10; background: #12161d; border-top: 1px solid var(--panel-border); }
 .lp-section { max-width: 1040px; margin: 0 auto; padding: 76px 32px; }
 .lp-kicker { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; color: var(--blue); margin: 0 0 14px; }
 .lp-title { font-family: var(--font-display); font-size: 38px; line-height: 1.15; letter-spacing: -0.03em; color: #fff; margin: 0 0 16px; }
@@ -421,6 +422,11 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
   display: flex;
   flex-direction: column;
   height: 100vh;
+  /* lighter lifted background (matches the markets pages); panels re-scoped to sit above it */
+  background: radial-gradient(circle at 50% 22%, #222b38 0%, #171c25 55%, #12161c 100%);
+  --panel-bg: #1d2330;
+  --nav-bg: #1a212c;
+  --panel-border: #2f3743;
 }
 
 .pro-nav {
@@ -470,7 +476,7 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
 
 .terminal-layout { flex: 1; display: grid; grid-template-columns: 220px 1fr; overflow: hidden; }
 
-.sidebar-recent { background: var(--sidebar-bg); border-right: 1px solid var(--panel-border); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.sidebar-recent { background: transparent; border-right: 1px solid var(--panel-border); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 
 .section-label { font-size: 10px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.1em; }
 
@@ -480,7 +486,7 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
 .market-item h4 { margin: 0 0 4px; font-size: 12px; color: var(--text-main); }
 .market-item .meta { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
 
-.main-terminal { padding: 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #0b0e11; }
+.main-terminal { padding: 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: transparent; }
 
 .market-header { display: flex; justify-content: space-between; align-items: flex-end; }
 .category-tag { font-size: 10px; font-weight: 800; color: var(--blue); text-transform: uppercase; margin-bottom: 8px; }
@@ -551,7 +557,7 @@ h1, h2, h3, h4, strong { font-family: var(--font-display); font-weight: 700; }
 
 .winner-card, .loser-card {
   padding: 12px 14px;
-  background: #0d1117;
+  background: #161b22;
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   cursor: pointer;

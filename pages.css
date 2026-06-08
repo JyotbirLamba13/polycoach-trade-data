@@ -1,12 +1,12 @@
 /* PolyAlpha - SEO Market Pages Stylesheet (Dark Terminal Theme) */
 :root{
-  --bg:#0b0e11;--panel:#15191e;--panel2:#0d1117;--border:#2b2f36;
+  --bg:#171c25;--panel:#1d2330;--panel2:#161b22;--border:#2f3743;
   --text:#f0f3fa;--muted:#707a8a;--blue:#2962ff;--green:#00c076;--red:#ff3b30;--purple:#a855f7;
   --sans:'Plus Jakarta Sans',system-ui,sans-serif;--disp:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.6}
+body{margin:0;background:radial-gradient(circle at 50% 0%,#222b38 0%,#171c25 55%,#12161c 100%) fixed;color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.6}
 a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 h1,h2,h3,h4,strong{font-family:var(--disp);font-weight:700;letter-spacing:-.02em}
