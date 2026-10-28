@@ -1,6 +1,10 @@
-# PolyCoach
+# PolyAlpha
 
-PolyCoach is a portfolio-ready product prototype for a Polymarket trader intelligence platform.
+Historical analysis of 13,500 Polymarket markets with wallet-level P&L computed from on-chain data: what profitable traders did differently, market by market.
+
+**Live:** https://polycoach-trade-data.pages.dev
+
+PolyAlpha started as PolyCoach, a product case study for a Polymarket trader intelligence platform.
 
 The case study asks:
 
@@ -52,14 +56,8 @@ Suggested subtitle:
 
 > Designing a Polymarket intelligence product that helps traders learn from profitable and losing behavior.
 
-## Data Note
+## Data
 
-The current prototype uses representative sample scenarios. A production version would connect the same interface to:
-
-- Polymarket historical trade data
-- wallet-level trade histories
-- market metadata
-- market resolutions
-- CTF position movements
-- live odds and liquidity data
-- user-ranked feedback labels
+- Market metadata and trades come from the public [Polymarket_data](https://huggingface.co/datasets/SII-WANGZJ/Polymarket_data) dataset on Hugging Face, queried with DuckDB.
+- `extract_markets.py` and `precompute_whales.py` build the market and wallet files (`app_markets.json`, `whales_real.json`); `generate_pages.py` writes one static page per market under `markets/`.
+- A GitHub Action (`.github/workflows/update_signals.yml`) reruns `remote_analysis.py` every 6 hours to refresh `latest_signals.json` and the search index.
